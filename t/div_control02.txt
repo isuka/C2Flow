@@ -1,0 +1,378 @@
+
+// 複数の制御の組み合わせ(連続使用)
+func1 {
+    // 処理のみの関数
+    process 01
+    process 02
+
+    while start
+    while (condition1) {
+      nop
+    }
+    while end
+
+    until start
+    until (condition1) {
+      nop
+    }
+    until end
+
+    do while start
+    do {
+      nop
+    } while (condition1)
+    do while end
+
+    for start
+    for (condition1) {
+      nop
+    }
+    for end
+
+    for2 start
+    for (i = 0; i < hoge; i++) {
+      nop
+    }
+    for2 end
+
+    switch start
+    switch (condition1) {
+    case fuga
+        nop1
+        break
+    case piyo
+        nop2
+    default
+        nop3
+    }
+    switch end
+
+    if start
+    if (condition1) {
+        nop
+    }
+    if end
+
+    else start
+    if (condition1) {
+        nop1
+    } else {
+        nop2
+    }
+    else end
+
+    else if start
+    if (condition1) {
+        nop1
+    } else if (condition2) {
+        nop2
+    } else {
+        nop3
+    }
+    else if end
+
+    else  if start
+    if (condition1) {
+        nop1
+    } else  if (condition2) {
+        nop2
+    } else {
+        nop3
+    }
+    else  if end
+}
+
+//
+// 関数内に複数処理があり、空行の行頭がスペースで揃えられている
+//
+
+// whileテスト
+func2 {
+    while (condition1) {
+      nop1
+      nop2
+      
+      nop3
+    }
+}
+
+// untilテスト
+func3 {
+    until (condition1) {
+      nop1
+      nop2
+      
+      nop3
+    }
+}
+
+// do whileテスト
+func4 {
+    do {
+      nop1
+      nop2
+      
+      nop3
+    } while (condition1)
+}
+
+// forテスト(疑似コード)
+func5 {
+    for (condition1) {
+      nop1
+      nop2
+      
+      nop3
+    }
+}
+
+// forテスト(ソースコード)
+func6 {
+    for (i = 0; i < hoge; i++) {
+      nop1
+      nop2
+      
+      nop3
+    }
+}
+
+// switchテスト
+func7 {
+    switch (condition1) {
+    case fuga
+        nop1
+        nop2
+        
+        nop3
+        break
+    case piyo
+        nop4
+        nop5
+        nop6
+    default
+
+        nop7
+        nop8
+        nop9
+    }
+}
+
+// ifテスト(if単体)
+func8 {
+    if (condition1) {
+        nop1
+        nop2
+        nop3
+    }
+}
+
+// ifテスト(if, else使用)
+func9 {
+    if (condition1) {
+        nop1
+        nop2
+        
+        nop3
+    } else {
+        nop4
+        
+        nop5
+        nop6
+    }
+}
+
+// ifテスト(if, else if, else使用)
+func10 {
+    if (condition1) {
+        nop1
+        nop2
+        
+        nop3
+    } else if (condition2) {
+        nop4
+        
+        nop5
+        nop6
+    } else {
+        
+        nop7
+        nop8
+        nop9
+    }
+}
+
+// ifテスト(else ifの間に複数の空白を使用)
+func11 {
+    if (condition1) {
+        nop1
+        nop2
+        nop3
+    } else  if (condition2) {
+        nop4
+        nop5
+        nop6
+        
+    } else {
+        nop7
+        
+        nop8
+        
+        nop9
+    }
+}
+
+//
+// 制御コードのネスト
+//
+
+// whileテスト
+func12 {
+    while (condition1) {
+        nop1
+        while (condition2) {
+            nop2
+        }
+    }
+    nop3
+}
+
+// untilテスト
+func13 {
+    until (condition1) {
+        nop1
+        until (condition2) {
+            nop2
+        }
+    }
+    nop3
+}
+
+// do whileテスト
+func14 {
+    do {
+        nop1
+        do {
+            nop2
+        } while (condition2)
+    } while (condition1)
+    nop3
+}
+
+// forテスト(疑似コード)
+func15 {
+    for (condition1) {
+        nop1
+        for (condition2) {
+            nop2
+        }
+    }
+    nop3
+}
+
+// forテスト(ソースコード)
+func16 {
+    for (i = 0; i < hoge; i++) {
+        nop1
+        for (j = 0; j < fuga; j++) {
+            nop2
+        }       
+    }
+    nop3
+}
+
+// switchテスト
+func17 {
+    switch (condition1) {
+    case fuga
+        switch (condition 2) {
+        case fuga2
+            nop1
+            nop2
+        
+            nop3
+            break
+        }
+    case piyo
+        nop4
+        switch (condition 3) {
+        case piyo 2
+            nop5
+            break
+        case piyo 3
+            nop6
+        }
+        break
+    default
+        nop7
+        switch (condition 4) {
+        default
+            nop8
+        }
+        nop9
+    }
+}
+
+// ifテスト(if単体)
+func18 {
+    if (condition1) {
+        nop1
+        if (condition2) {
+            nop2
+        }
+    }
+    nop3
+}
+
+// ifテスト(if, else使用)
+func19 {
+    if (condition1) {
+        nop1
+        if (condition2) {
+            nop2
+        }
+        nop3
+    } else {
+        nop4
+        if (condition3) {
+            nop5
+        } else {
+            nop6
+        }        
+    }
+}
+
+// ifテスト(if, else if, else使用)
+func20 {
+    nop0
+    if (condition1) {
+        nop1
+        if (condition3) {
+            nop2
+            nop3
+        }
+    } else if (condition2) {
+        if (condition3) {
+            nop4
+        } else if (condition4) {
+            nop5
+        } else {
+            nop6
+        }
+    } else {
+        nop7
+        nop8
+        if (condition3) {
+            nop9
+            nop10
+        } else if (condition4) {
+            nop11
+            nop12
+        } else {
+            nop13
+            nop14
+        }
+        nop15
+        nop16
+    }
+    nop17
+}
