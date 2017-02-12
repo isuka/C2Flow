@@ -753,12 +753,34 @@ subtest "C2Flow->div_control: complex" => sub {
                                 'conditions' => ['condition2'],
                                 'src'        => '',
                                 'proc'       => [
-                                    { 'type' => 'proc', 'code' => 'nop2'},
+                                    { 'type' => 'proc', 'code' => 'nop2' },
                                 ]
                             },
                         ]
          });
-    push(@proc, {'type' => 'proc', 'code' => 'nop3'});
+    push(@proc, { 'type' => 'proc', 'code' => 'nop3' });
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    $fn++;
+
+    #--- function 13
+    @proc = ();
+    push(@proc, {
+        'type'       => 'until',
+        'conditions' => ['condition1'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'proc', 'code' => 'nop1'},
+                            {
+                                'type'       => 'until',
+                                'conditions' => ['condition2'],
+                                'src'        => '',
+                                'proc'       => [
+                                    { 'type' => 'proc', 'code' => 'nop2' },
+                                ]
+                            },
+                        ]
+         });
+    push(@proc, { 'type' => 'proc', 'code' => 'nop3' });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
