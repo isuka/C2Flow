@@ -280,9 +280,6 @@ sub source2proc {
     my $ctrl_ref;
     my $depth = 0;
 
-### debug
-    my $debug = 0;
-
     push(@procs, \@proc);
 
     # 処理した(する)srcは削除
@@ -298,17 +295,9 @@ sub source2proc {
         $line =~ s/^ +//;
         $line =~ s/ +$//;
 
-### debug
-#        if ($debug == 1) {
-#            if ($ctrl_ref->{'src'} eq "\n") {
-#                printf(">>> --- %x\n", $ctrl_ref);
-#            }
-#        }
-
         # 空行は飛ばす
         if ($line eq '') { next; }
 
-#        if ($ctrls[$#ctrls] eq 'while') { printf(">>>>>> [%s]\n", $line); }
         # 疑似コードの処理部にて、文頭に書かれた制御文字を誤認識しないよう厳密にマッチをかける
         # ただし、switchのcaseとdefaultは疑似コードの文法上(コロンが無い)、処理コードと見分けが付けられないため
         # コードのみでマッチをかけている。
@@ -395,7 +384,6 @@ sub source2proc {
                 #     ]
                 #   } 
                 #
-                #
 
                 my %noname_hash = (
                     'type'       => $ctrls[$#ctrls],
@@ -417,9 +405,10 @@ sub source2proc {
                     my $condition = 'else';
                     push(@conditions, $condition);
                 } else {
-                    $line =~ s/(.+?)\{//;
-#                    printf(">>> [%s] %x, ctrl=%s, src=[%s]\n", $line, $ctrl_ref, $ctrls[$#ctrls], $ctrl_ref->{'src'});
-                    $ctrl_ref->{'src'} .= $line . "\n";
+                    $line =~ s/(.+?)\{ *//;
+                    if ($line ne '') {
+                        $ctrl_ref->{'src'} .= $line . "\n";
+                    }
                     my $condition = $1;
                     $condition =~ s/.*\( *(.*?) *\).*/$1/;
                     push(@conditions, $condition);
@@ -427,15 +416,8 @@ sub source2proc {
             }
 
         } elsif ($line =~ m/\}/) {
-### debug
-#            if ($ctrl_ref->{'src'} eq "\n") { printf(">>> ??? %x\n", $ctrl_ref); }
-            # 閉じ中括弧は単一行で用いられるものとする
             &source2proc($ctrl_ref);
             $ctrls[$#ctrls] = ''; # TODO: ここクリア？pop？
-
-### debug
-#            if ($ctrl_ref->{'src'} eq "\n") { printf(">>> !!! %x\n", $ctrl_ref); } else { printf(">>> debug on %x f=%x\n", $ctrl_ref, $f); $debug = 1; }
-#            printf(">>> depth=%d, [%d]%x\n", $depth, $#procs - 1, $procs[$#procs - 1]);
 
             $depth--;
             pop(@procs);
