@@ -275,12 +275,12 @@ sub source2proc {
     my $f = shift; # function|procハッシュのリファレンス
     my $src = $f->{'src'};
     my @proc;         # 関数の最上位proc
-    my @procs;        # ネストしていった時のprocのリファレンス、depthをインデックスとして使用する
+    my @ctrl_refs;    # ネストしていった時のctrl系hashのリファレンス、ネストしたreturn先にもなる、depthをインデックスとして使用する
     my @ctrls = (''); # [0]の最初は何の制御も行っていないのでNULLで初期化する
     my $ctrl_ref;
     my $depth = 0;
 
-    push(@procs, \@proc);
+    push(@ctrl_refs, \@proc);
 
     # 処理した(する)srcは削除
     # 改行のみの行はforeachがスキップされてしまうので、この位置でクリアが必要
@@ -346,8 +346,9 @@ sub source2proc {
             } elsif (($ctrls[$#ctrls] eq 'do') && ($match_ctrl eq 'while')) {
                 if ($line =~ m/\}/) {
                     $depth--;
-                    pop(@procs);
+                    pop(@ctrl_refs);
                 }
+                printf(">>> do->while: ctrl_ref=%x, line=%s\n", $ctrl_ref, $line);
                 $line =~ s/.*\( *(.*?) *\).*/$1/;
                 $ctrl_ref->{'conditions'}[0] = $line;
 
@@ -359,7 +360,7 @@ sub source2proc {
                 # elseで中括弧が閉じられたらそこまでのsrcをprocに分解するため再帰呼び出しを行う。
                 if (($match_ctrl eq 'else') || ($match_ctrl eq 'else if')) {
                     $depth--;
-                    pop(@procs);
+                    pop(@ctrl_refs);
                     &source2proc($ctrl_ref);
                 }
 
@@ -391,15 +392,17 @@ sub source2proc {
                     'src'        => '',
                     'proc'       => \@proc_child,
                     );
-                push(@{$procs[$#procs]}, \%noname_hash);
-                $ctrl_ref = $procs[$#procs]->[$#{$procs[$#procs]}];
-                #push(@{$procs[$#procs]->{'proc'}}, \%noname_hash);
+                push(@{$ctrl_refs[$#ctrl_refs]}, \%noname_hash);
+                $ctrl_ref = $ctrl_refs[$#ctrl_refs]->[$#{$ctrl_refs[$#ctrl_refs]}];
+                #push(@{$ctrl_refs[$#ctrl_refs]->{'proc'}}, \%noname_hash);
                 #$ctrl_ref = \%noname_hash;
+                printf(">>> type=%s, ctrl_ref=%x, ctrl_refs=%d, ctrl_refs[0/1]=%x/%x\n", $noname_hash{'type'}, \%noname_hash, $#ctrl_refs, $ctrl_refs[0], $ctrl_refs[1]);
 
                 # 同一行で中括弧を開いて閉じてはしないものとする
                 # 開き中括弧は制御文字と同一行にあるものとする
                 $depth++;
-                push(@procs, \@proc_child);
+# TODO:このpushは何のために入っているのだろうか…
+                push(@ctrl_refs, \@proc_child);
 
                 if ($match_ctrl eq 'else') {
                     my $condition = 'else';
@@ -420,8 +423,8 @@ sub source2proc {
             $ctrls[$#ctrls] = ''; # TODO: ここクリア？pop？
 
             $depth--;
-            pop(@procs);
-            $ctrl_ref = $procs[$#procs]->[$#{$procs[$#procs]}];
+            pop(@ctrl_refs);
+            $ctrl_ref = $ctrl_refs[$#ctrl_refs]->[$#{$ctrl_refs[$#ctrl_refs]}];
         } else {
             if ($ctrls[$#ctrls] eq '') {
                 push(@proc, {
@@ -429,27 +432,24 @@ sub source2proc {
                     'code' => $line
                      });
             } elsif ($ctrls[$#ctrls] eq 'switch') {
-                my $proc_ref = $ctrl_ref->{'proc'};
                 if ($line =~ m/break/) {
-                    push(@{$proc_ref}, {
+                    push(@{$ctrl_ref->{'proc'}}, {
                         'type' => 'ctrl',
                         'code' => $line,
                          });
                 } else {
-                    push(@{$proc_ref}, {
+                    push(@{$ctrl_ref->{'proc'}}, {
                         'type' => 'proc',
                         'code' => $line
                          });
                 }
             } elsif ($ctrls[$#ctrls] eq 'if') {
-                my $proc_ref = $ctrl_ref->{'proc'};
-                push(@{$proc_ref}, {
+                push(@{$ctrl_ref->{'proc'}}, {
                     'type' => 'proc',
                     'code' => $line
                      });
             } else {
-                my $proc_ref = $ctrl_ref->{'proc'};
-                push(@{$proc_ref}, {
+                push(@{$ctrl_ref->{'proc'}}, {
                     'type' => 'proc',
                     'code' => $line
                      });
