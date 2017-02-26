@@ -129,7 +129,6 @@ sub read {
         ${$self->{'read_src'}} .= $_;
     }
     ${$self->{'read_src'}} =~ s/\/\*.*?\*\///gs; # コメント行を削除
-#    printf(">>%s\n", ${$self->{'read_src'}});
 }
 
 # $self->'read_src'を関数に分割する
@@ -299,7 +298,6 @@ sub source2proc {
 
         # 空行は飛ばす
         if ($line eq '') { next; }
-#        printf(">>> line=%s, ref=%x, src=%s\n", $line, $ctrl_ref, $ctrl_ref->{'src'});
 
         # 疑似コードの処理部にて、文頭に書かれた制御文字を誤認識しないよう厳密にマッチをかける
         # ただし、switchのcaseとdefaultは疑似コードの文法上(コロンが無い)、処理コードと見分けが付けられないため
@@ -335,7 +333,6 @@ sub source2proc {
                 
                 push(@{$ctrl_ref->{'proc'}}, \%f_case);
             } elsif (($ctrls[$#ctrls] eq 'switch') && ($match_ctrl eq 'default')) {
-#                printf("    >>> \n", );
                 # @conditionsにpushした同一インデックスの@procにprocハッシュ作成
                 my @conditions = ();
                 my @proc_child = ();
@@ -418,7 +415,6 @@ sub source2proc {
                 # 次のカレントは作成したハッシュになるので、ctrl_refsとctrl_refを更新する
                 push(@ctrl_refs, \%noname_hash);
                 $ctrl_ref = \%noname_hash;
-#                printf(">>> type=%s, ctrl_ref=%x, ctrl_refs=%d, ctrl_refs[0/1]=%x/%x\n", $noname_hash{'type'}, \%noname_hash, $#ctrl_refs, $ctrl_refs[0], $ctrl_refs[1]);
 
                 # 同一行で中括弧を開いて閉じてはしないものとする
                 # 開き中括弧は制御文字と同一行にあるものとする
