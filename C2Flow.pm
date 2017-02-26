@@ -280,7 +280,9 @@ sub source2proc {
     my $ctrl_ref;
     my $depth = 0;
 
-    push(@ctrl_refs, \@proc);
+    # 呼び出しで渡されたリファレンス(処理のカレントになるハッシュ)をctrl_refsに保存する。
+    push(@ctrl_refs, $f);
+    $ctrl_ref = $f;
 
     # 処理した(する)srcは削除
     # 改行のみの行はforeachがスキップされてしまうので、この位置でクリアが必要
@@ -344,24 +346,25 @@ sub source2proc {
                 
                 push(@{$ctrl_ref->{'proc'}}, \%f_case);
             } elsif (($ctrls[$#ctrls] eq 'do') && ($match_ctrl eq 'while')) {
-                if ($line =~ m/\}/) {
-                    $depth--;
-                    pop(@ctrl_refs);
-                }
-                printf(">>> do->while: ctrl_ref=%x, line=%s\n", $ctrl_ref, $line);
+                # TODO: '}'とwhileは同じ行にある想定かつ、whileの条件文も同じ行にある想定の処理
                 $line =~ s/.*\( *(.*?) *\).*/$1/;
                 $ctrl_ref->{'conditions'}[0] = $line;
 
+                &source2proc($ctrl_ref);
+                $depth--;
+                pop(@ctrl_refs);
+                $ctrl_ref = $ctrl_refs[$#ctrl_refs];
+
                 if ($depth == 0) {
                     $ctrls[$#ctrls] = ''; # TODO: ここクリア？pop？
-                    &source2proc($ctrl_ref);
                 }
             } else {
                 # elseで中括弧が閉じられたらそこまでのsrcをprocに分解するため再帰呼び出しを行う。
                 if (($match_ctrl eq 'else') || ($match_ctrl eq 'else if')) {
+                    &source2proc($ctrl_ref);
                     $depth--;
                     pop(@ctrl_refs);
-                    &source2proc($ctrl_ref);
+                    $ctrl_ref = $ctrl_refs[$#ctrl_refs];
                 }
 
                 # 識別中の制御を更新
@@ -386,23 +389,36 @@ sub source2proc {
                 #   } 
                 #
 
+                # +- procs ----+
+                # | proc       |
+                # +------------+
+                # | ctrl       |   +- procs-----+
+                # | + proc ------> | proc       |
+                # +------------+   +------------+
+                # | proc       |   | proc       |
+                # +------------+   +------------+
+                #                  | ctrl       |   +- procs-----+  <- 2.
+                #                  | + proc ------> | proc       |  <- 1.
+                #                  +------------+   +------------+
+                #
+                # 1. ctrl系の文字列がマッチすると無名ハッシュを作成してprocにpushする。
+                # 2. ctrl_refを更新、pushしたprocがctrl_refになる。
+                #
                 my %noname_hash = (
                     'type'       => $ctrls[$#ctrls],
                     'conditions' => \@conditions,
                     'src'        => '',
                     'proc'       => \@proc_child,
                     );
-                push(@{$ctrl_refs[$#ctrl_refs]}, \%noname_hash);
-                $ctrl_ref = $ctrl_refs[$#ctrl_refs]->[$#{$ctrl_refs[$#ctrl_refs]}];
-                #push(@{$ctrl_refs[$#ctrl_refs]->{'proc'}}, \%noname_hash);
-                #$ctrl_ref = \%noname_hash;
-                printf(">>> type=%s, ctrl_ref=%x, ctrl_refs=%d, ctrl_refs[0/1]=%x/%x\n", $noname_hash{'type'}, \%noname_hash, $#ctrl_refs, $ctrl_refs[0], $ctrl_refs[1]);
+                push(@{$ctrl_ref->{'proc'}}, \%noname_hash);
+                # 次のカレントは作成したハッシュになるので、ctrl_refsとctrl_refを更新する
+                push(@ctrl_refs, \%noname_hash);
+                $ctrl_ref = \%noname_hash;
+#                printf(">>> type=%s, ctrl_ref=%x, ctrl_refs=%d, ctrl_refs[0/1]=%x/%x\n", $noname_hash{'type'}, \%noname_hash, $#ctrl_refs, $ctrl_refs[0], $ctrl_refs[1]);
 
                 # 同一行で中括弧を開いて閉じてはしないものとする
                 # 開き中括弧は制御文字と同一行にあるものとする
                 $depth++;
-# TODO:このpushは何のために入っているのだろうか…
-                push(@ctrl_refs, \@proc_child);
 
                 if ($match_ctrl eq 'else') {
                     my $condition = 'else';
@@ -424,7 +440,7 @@ sub source2proc {
 
             $depth--;
             pop(@ctrl_refs);
-            $ctrl_ref = $ctrl_refs[$#ctrl_refs]->[$#{$ctrl_refs[$#ctrl_refs]}];
+            $ctrl_ref = $ctrl_refs[$#ctrl_refs];
         } else {
             if ($ctrls[$#ctrls] eq '') {
                 push(@proc, {
