@@ -323,56 +323,56 @@ func18 {
     nop3
 }
 
-// // ifテスト(if, else使用)
-// func19 {
-//     if (condition1) {
-//         nop1
-//         if (condition2) {
-//             nop2
-//         }
-//         nop3
-//     } else {
-//         nop4
-//         if (condition3) {
-//             nop5
-//         } else {
-//             nop6
-//         }        
-//     }
-// }
+// ifテスト(if, else使用)
+func19 {
+    if (condition1) {
+        nop1
+        if (condition2) {
+            nop2
+        }
+        nop3
+    } else {
+        nop4
+        if (condition3) {
+            nop5
+        } else {
+            nop6
+        }        
+    }
+}
 
-// // ifテスト(if, else if, else使用)
-// func20 {
-//     nop0
-//     if (condition1) {
-//         nop1
-//         if (condition3) {
-//             nop2
-//             nop3
-//         }
-//     } else if (condition2) {
-//         if (condition3) {
-//             nop4
-//         } else if (condition4) {
-//             nop5
-//         } else {
-//             nop6
-//         }
-//     } else {
-//         nop7
-//         nop8
-//         if (condition3) {
-//             nop9
-//             nop10
-//         } else if (condition4) {
-//             nop11
-//             nop12
-//         } else {
-//             nop13
-//             nop14
-//         }
-//         nop15
-//         nop16
-//     }
-//     nop17
-// }
+// ifテスト(if, else if, else使用)
+func20 {
+    nop0
+    if (condition1) {
+        nop1
+        if (condition2) {
+            nop2
+            nop3
+        }
+    } else if (condition3) {
+        if (condition4) {
+            nop4
+        } else if (condition5) {
+            nop5
+        } else {
+            nop6
+        }
+    } else {
+        nop7
+        nop8
+        if (condition6) {
+            nop9
+            nop10
+        } else if (condition7) {
+            nop11
+            nop12
+        } else {
+            nop13
+            nop14
+        }
+        nop15
+        nop16
+    }
+    nop17
+}

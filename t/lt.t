@@ -921,12 +921,11 @@ subtest "C2Flow->div_control: complex" => sub {
                         ]
          });
     push(@proc, { 'type' => 'proc', 'code' => 'nop3' });
-#    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
     #--- function 19
     @proc = ();
-    push(@proc, { 'type' => 'proc', 'code' => 'nop0' });
     push(@proc, {
         'type'       => 'if',
         'conditions' => ['condition1'],
@@ -968,11 +967,12 @@ subtest "C2Flow->div_control: complex" => sub {
                             },
                         ]
          });
-#    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
     #--- function 20
     @proc = ();
+    push(@proc, { 'type' => 'proc', 'code' => 'nop0' });
     push(@proc, {
         'type'       => 'if',
         'conditions' => ['condition1'],
@@ -992,12 +992,12 @@ subtest "C2Flow->div_control: complex" => sub {
          });
     push(@proc, {
         'type'       => 'else if',
-        'conditions' => ['condition2'],
+        'conditions' => ['condition3'],
         'src'        => '',
         'proc'       => [
                             {
                                 'type'       => 'if',
-                                'conditions' => ['condition3'],
+                                'conditions' => ['condition4'],
                                 'src'        => '',
                                 'proc'       => [
                                     { 'type' => 'proc', 'code' => 'nop4' },
@@ -1005,7 +1005,7 @@ subtest "C2Flow->div_control: complex" => sub {
                             },
                             {
                                 'type'       => 'else if',
-                                'conditions' => ['condition4'],
+                                'conditions' => ['condition5'],
                                 'src'        => '',
                                 'proc'       => [
                                     { 'type' => 'proc', 'code' => 'nop5' },
@@ -1030,7 +1030,7 @@ subtest "C2Flow->div_control: complex" => sub {
                             { 'type' => 'proc', 'code' => 'nop8'},
                             {
                                 'type'       => 'if',
-                                'conditions' => ['condition5'],
+                                'conditions' => ['condition6'],
                                 'src'        => '',
                                 'proc'       => [
                                     { 'type' => 'proc', 'code' => 'nop9' },
@@ -1039,7 +1039,7 @@ subtest "C2Flow->div_control: complex" => sub {
                             },
                             {
                                 'type'       => 'else if',
-                                'conditions' => ['condition6'],
+                                'conditions' => ['condition7'],
                                 'src'        => '',
                                 'proc'       => [
                                     { 'type' => 'proc', 'code' => 'nop11' },
@@ -1060,7 +1060,7 @@ subtest "C2Flow->div_control: complex" => sub {
                         ]
          });
     push(@proc, { 'type' => 'proc', 'code' => 'nop17' });
-#    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
 };
