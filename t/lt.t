@@ -877,10 +877,10 @@ subtest "C2Flow->div_control: complex" => sub {
                                 'conditions' => ['condition 3'],
                                 'src'        => '',
                                 'proc'       => [
-                                    { 'type' => 'ctrl', 'conditions' => ['piyo2'], 'code' => 'case'},
+                                    { 'type' => 'ctrl', 'conditions' => ['piyo 2'], 'code' => 'case'},
                                     { 'type' => 'proc', 'code' => 'nop5'},
                                     { 'type' => 'ctrl', 'code' => 'break'},
-                                    { 'type' => 'ctrl', 'conditions' => ['piyo3'], 'code' => 'case'},
+                                    { 'type' => 'ctrl', 'conditions' => ['piyo 3'], 'code' => 'case'},
                                     { 'type' => 'proc', 'code' => 'nop6'},
                                 ]
                             },
@@ -899,8 +899,7 @@ subtest "C2Flow->div_control: complex" => sub {
                             { 'type' => 'proc', 'code' => 'nop9'},
                         ]
          });
-    push(@proc, { 'type' => 'proc', 'code' => 'nop3' });
-#    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
     #--- function 18
