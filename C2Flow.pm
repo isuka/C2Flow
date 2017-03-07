@@ -702,30 +702,44 @@ sub gen_html {
 <script>
 EOL
 
+#     foreach (@{$functions}) {
+#         my $flow = $_->{'flow'};
+
+#         print <<EOL;
+#     var str=(function(){/*
+# EOL
+#         printf("st=>start: %s\n", $_->{'name'});
+#         &struct2box($flow);
+
+#         printf("st->");
+#         &struct2flow($flow);
+
+#         print <<EOL;
+
+# */}).toString().split('*')[1];
+# 	console.log("input str:");
+# 	console.log(str);
+# 	var diagram = flowchart.parse(str);
+# 	diagram.drawSVG('diagram', {
+# 		"line-width": 2,
+# 		'scale': 0.7,
+# 		"fill": "#eee"
+# 	});
+# EOL
+#     }
     foreach (@{$functions}) {
         my $flow = $_->{'flow'};
 
-        print <<EOL;
-    var str=(function(){/*
-EOL
-        printf("st=>start: %s\n", $_->{'name'});
+        printf("var diagram = flowchart.parse('st=>start: %s\\n' +\n", $_->{'name'});
         &struct2box($flow);
 
-        printf("st->");
+        printf("'' +\n");
+
+        printf("'st->");
         &struct2flow($flow);
+        printf("');\n\n");
 
-        print <<EOL;
-
-*/}).toString().split('*')[1];
-	console.log("input str:");
-	console.log(str);
-	var diagram = flowchart.parse(str);
-	diagram.drawSVG('diagram', {
-		"line-width": 2,
-		'scale': 0.7,
-		"fill": "#eee"
-	});
-EOL
+        printf("diagram.drawSVG('diagram');\n");
     }
 
     print <<EOL;
@@ -742,7 +756,7 @@ sub struct2box {
     for (my $i = 0; $i <= $#{$p}; $i++) {
         if (exists($p->[$i]->{'type'})) {
             if ($p->[$i]->{'type'} eq 'condition') {
-                printf("id_%x_%04d=>%s: %s\n", $p, $i,
+                printf("'id_%x_%04d=>%s: %s\\n' +\n", $p, $i,
                        $p->[$i]->{'type'}, $p->[$i]->{'value'});
                 if (exists($p->[$i]->{'yes'})) {
                     &struct2box($p->[$i]->{'yes'});
@@ -751,10 +765,10 @@ sub struct2box {
                     &struct2box($p->[$i]->{'no'});
                 }
             } elsif ($p->[$i]->{'type'} eq 'end') {
-                printf("id_%x_%04d=>%s: %s\n", $p, $i,
+                printf("'id_%x_%04d=>%s: %s\\n' +\n", $p, $i,
                        $p->[$i]->{'type'}, $p->[$i]->{'value'});
             } else {
-                printf("id_%x_%04d=>%s: %s\n", $p, $i,
+                printf("'id_%x_%04d=>%s: %s\\n' +\n", $p, $i,
                        $p->[$i]->{'type'}, $p->[$i]->{'value'});
             }
         }
@@ -767,7 +781,7 @@ sub struct2flow {
     for (my $i = 0; $i <= $#{$p}; $i++) {
         if (exists($p->[$i]->{'type'})) {
             if ($p->[$i]->{'type'} eq 'condition') {
-                printf("id_%x_%04d\n", $p, $i);
+                printf("id_%x_%04d\\n' +\n'", $p, $i);
                 if (exists($p->[$i]->{'yes'})) {
                     printf("id_%x_%04d(yes)->", $p, $i);
                     &struct2flow($p->[$i]->{'yes'});
@@ -781,7 +795,7 @@ sub struct2flow {
             }
     
             if (exists($p->[$i]->{'to'})) {
-                printf("id_%s\n", $p->[$i]->{'to'});
+                printf("id_%s\\n' +\n'", $p->[$i]->{'to'});
             }    
         }
     }
