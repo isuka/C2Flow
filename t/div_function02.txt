@@ -42,3 +42,15 @@ int func3(args)
           nop
       }
   }
+
+// 関数の引数に関数ポインタを使用している
+void func5 (int *arg)
+{
+    nop
+}
+
+void func6(int argc,char *argv)
+{
+    nop
+}
+

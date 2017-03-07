@@ -1,0 +1,6 @@
+
+// 関数ポインタを使用した関数
+func1 (int argc, char *argv) {
+    nop1
+}
+

@@ -172,6 +172,26 @@ subtest "C2Flow->div_function: complex" => sub {
     is_deeply($p->{'functions'}[$fn], \%exp) || diag explain $p->{'functions'}[$fn];
     $fn++;
 
+    #--- function 5
+    %exp = (
+        'name'   => 'void func5 (int *arg)',
+        'src'    => "
+    nop
+",
+    );
+    is_deeply($p->{'functions'}[$fn], \%exp) || diag explain $p->{'functions'}[$fn];
+    $fn++;
+
+    #--- function 6
+    %exp = (
+        'name'   => 'void func6(int argc,char *argv)',
+        'src'    => "
+    nop
+",
+    );
+    is_deeply($p->{'functions'}[$fn], \%exp) || diag explain $p->{'functions'}[$fn];
+    $fn++;
+
 };
 
 #
@@ -1063,6 +1083,23 @@ subtest "C2Flow->div_control: complex" => sub {
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
+};
+
+subtest "C2Flow->div_control: misc" => sub {
+    my $p = C2Flow->new();
+    my @proc; # 処理を格納する配列
+    my $fn = 0;
+
+    $p->read('./t/div_control03.txt');
+    $p->div_function();
+    $p->div_control();
+
+    #--- function 1
+    @proc = ();
+    push(@proc, {'type' => 'proc', 'code' => 'nop1'});
+    ok($p->{'functions'}[$fn]->{'name'} eq 'func1 (int argc, char *argv)');
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    $fn++;
 };
 
 done_testing;
