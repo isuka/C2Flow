@@ -125,6 +125,7 @@ sub read {
     open (my $fh, '<', $file) or die 'cannot open file';
     while (<$fh>) {
         s/[\r\n]+$/\n/; # 改行コードを\nに統一
+        s/\t/ /g;       # タブを空白に置換
         s/\/\/.*$//; # 一行コメントを削除
         ${$self->{'read_src'}} .= $_;
     }
