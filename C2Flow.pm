@@ -729,7 +729,7 @@ EOL
 # 	});
 # EOL
 #     }
-    foreach (@{$functions}) {
+    foreach (reverse(@{$functions})) {
         my $flow = $_->{'flow'};
 
         printf("var diagram = flowchart.parse('st=>start: %s\\n' +\n", $_->{'name'});
