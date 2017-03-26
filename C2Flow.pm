@@ -476,6 +476,400 @@ sub source2proc {
     }
 }
 
+# ノード間の接続を作成する
+# %function {
+#     node => [
+#               % {
+#                   id    => ''
+#                   shape => 'square|round square|circle|diamond'
+#                   text  => ''
+#                   next  => @ [
+#                                % {
+#                                    id   => ''
+#                                    link => 'allow|open|dot|thick'
+#                                    text => ''
+#                                }
+#                           ]
+#               }
+#             ]
+# }
+sub gen_node {
+    my $self = shift;
+    my $functions = $self->{'functions'};
+    
+    foreach (@{$functions}) {
+        my $function = $_;
+        my @node;
+        
+        # 関数開始のノード作成
+        push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => $function->{'name'},
+                         'next' => [
+                             {
+                                 'id' => 'id0a',
+                                 'link' => 'allow',
+                                 'text' => ''
+                             }
+                         ]});
+        $function->{'node'} = \@node;
+        # 関数内のノード作成
+        &proc2node($function->{'node'}, $function->{'proc'}, 'id', 'return');
+        # 関数終了(return)のノード作成
+        # TODO: returnの型(void|non void)に応じてtextを設定する
+        push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    }
+}
+
+# この関数はgen_nodeから呼ばれる場合と、再帰呼出しで呼ばれる2種類起動方法がある。
+# そのため、引数はどの方法で呼ばれても矛盾無く動作しなければならない。
+sub proc2node {
+    my $node_ref  = shift;
+    my $proc_ref  = shift;
+    my $parent_id = shift;
+    my $return_id = shift;
+
+    for (my $i = 0; $i < scalar(@$proc_ref); $i++) {
+        my $proc = $proc_ref->[$i];
+        my $type = $proc->{'type'};
+        if ($type eq 'proc') {
+            my $id = sprintf("%s%da", $parent_id, $i);
+
+            my @next;
+            if ($i == $#{$proc_ref}) {
+                push(@next, {
+                        'id'   => $return_id,
+                        'link' => 'allow',
+                        'text' => ''
+                     });
+            } else {
+                push(@next, {
+                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
+                        'link' => 'allow',
+                        'text' => ''
+                     });
+            }
+
+            push(@$node_ref, {
+                    'id'    => $id,
+                    'shape' => 'square',
+                    'text'  => $proc->{'code'},
+                    'next'  => \@next
+                 });
+        } elsif (($type eq 'while') || ($type eq 'for')) {
+            my $id = sprintf("%s%da", $parent_id, $i);
+
+            my @next;
+            # falseのlink先を作成
+            if ($i == $#{$proc_ref}) {
+                push(@next, {
+                        'id'   => $return_id,
+                        'link' => 'allow',
+                        'text' => 'false',
+                     });
+            } else {
+                push(@next, {
+                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
+                        'link' => 'allow',
+                        'text' => 'false'
+                     });
+            }
+            # trueのlink先を作成
+            # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
+            push(@next, {
+                'id'   => sprintf("%s0a", $id),
+                'link' => 'allow',
+                'text' => 'true'
+                });
+
+            push(@$node_ref, {
+                    'id'    => $id,
+                    'shape' => 'diamond',
+                    'text'  => $proc->{'conditions'}->[0],
+                    'next'  => \@next,
+                 });
+
+            # procを再帰呼び出しで作成。
+            &proc2node($node_ref, $proc->{'proc'}, $id, $id);
+        } elsif ($type eq 'until') {
+            my $id = sprintf("%s%da", $parent_id, $i);
+
+            my @next;
+            # trueのlink先を作成
+            if ($i == $#{$proc_ref}) {
+                push(@next, {
+                        'id'   => $return_id,
+                        'link' => 'allow',
+                        'text' => 'true',
+                     });
+            } else {
+                push(@next, {
+                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
+                        'link' => 'allow',
+                        'text' => 'true'
+                     });
+            }
+            # falseのlink先を作成
+            # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
+            push(@next, {
+                'id'   => sprintf("%s0a", $id),
+                'link' => 'allow',
+                'text' => 'false'
+                });
+
+            push(@$node_ref, {
+                    'id'    => $id,
+                    'shape' => 'diamond',
+                    'text'  => $proc->{'conditions'}->[0],
+                    'next'  => \@next,
+                 });
+
+            # procを再帰呼び出しで作成。
+            &proc2node($node_ref, $proc->{'proc'}, $id, $id);
+        } elsif ($type eq 'do') {
+            # circleとdiamond用のIDを計算
+            my $id_a = sprintf("%s%da", $parent_id, $i);
+            my $id_b = sprintf("%s%db", $parent_id, $i);
+
+            # doの場合は分岐の合流から処理が始まるので、最初はサークルを描く
+            push(@$node_ref, {
+                    'id'    => $id_a,
+                    'shape' => 'circle',
+                    'text'  => ' ',
+                    'next'  => [
+                        {
+                            'id' => sprintf("%s0a", $id_a),
+                            'link' => 'allow',
+                            'text' => ''
+                        }
+                        ]});
+
+            my @next;
+            # falseのlink先を作成
+            if ($i == $#{$proc_ref}) {
+                push(@next, {
+                        'id'   => $return_id,
+                        'link' => 'allow',
+                        'text' => 'false',
+                     });
+            } else {
+                push(@next, {
+                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
+                        'link' => 'allow',
+                        'text' => 'false'
+                     });
+            }
+            # trueのlink先を作成
+            # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
+            push(@next, {
+                'id'   => sprintf("%s", $id_a),
+                'link' => 'allow',
+                'text' => 'true'
+                });
+
+            push(@$node_ref, {
+                    'id'    => $id_b,
+                    'shape' => 'diamond',
+                    'text'  => $proc->{'conditions'}->[0],
+                    'next'  => \@next,
+                 });
+
+            # procを再帰呼び出しで作成。
+            &proc2node($node_ref, $proc->{'proc'}, $id_a, $id_b);
+        } elsif ($type eq 'switch') {
+            my $id = sprintf("%s%da", $parent_id, $i);
+
+            # $proc->{'proc'}の中からcase文を全て探してnextにpushする
+            my @next;
+            my $sw_proc = $proc->{'proc'};
+            for (my $j = 0; $j < scalar(@$sw_proc); $j++) {
+                my $sw_type = $sw_proc->[$j]->{'type'};
+                
+                if (($sw_type eq 'ctrl') && ($sw_proc->[$j]->{'code'} eq 'case')) {
+                    # switchからの接続先はcase文の次なので、link先のidはcaseが無くなった先を探す
+                    for (my $k = 1; $k < scalar(@$sw_proc); $k++) {
+                        if (($sw_proc->[$j + $k]->{'type'} ne 'ctrl') || ($sw_proc->[$j + $k]->{'code'} ne 'case')) {
+                            my $sw_cond = $sw_proc->[$j]->{'conditions'}->[0];
+                            push(@next, {
+                                    'id'   => sprintf("%s%da", $id, $j + $k),
+                                    'link' => 'allow',
+                                    'text' => $sw_cond,
+                                 });
+                            last;
+                        }
+                    }
+                }
+            }
+            
+            push(@$node_ref, {
+                    'id'    => $id,
+                    'shape' => 'diamond',
+                    'text'  => $proc->{'conditions'}->[0],
+                    'next'  => \@next,
+                 });
+
+            # while内のprocを再帰呼び出しで作成。
+            # switchは条件の次の要素が戻り先になるので、proc_refが最後ならreturn_idが戻り先になる
+            if ($i == $#{$proc_ref}) {
+                &proc2node($node_ref, $proc->{'proc'}, $id, $return_id);
+            } else {
+                my $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
+                &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
+            }
+        } elsif ($type eq 'ctrl') {
+            my $id = sprintf("%s%da", $parent_id, $i);
+            
+            my $code = $proc->{'code'};
+            if ($code eq 'case') {
+                # 先頭のcase文なら何もしない
+                if ($i == 0) { next; }
+                
+                # 一つ前の処理がbreakなら何もしない
+                my $prev_proc = $proc_ref->[$i - 1];;
+                if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'break')) { next; }
+                
+                # 一つ前の処理がbreakで無いならlink先を一つ先に繋ぎ変える
+                my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
+                my $last_next = $prev_next->[$#{$prev_next}];
+                $last_next->{'id'} = sprintf("%s%da", $parent_id, $i + 1);
+            }  elsif ($code eq 'break') {
+                # 一つ前の処理を繋ぎ変える
+                my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
+                my $last_next = $prev_next->[$#{$prev_next}];
+                $last_next->{'id'} = $return_id;
+            }
+        } elsif (($type eq 'if') || ($type eq 'else if')) {
+            my $id = sprintf("%s%da", $parent_id, $i);
+            my $proc_ret_id;
+            if ($i == $#{$proc_ref}) {
+                $proc_ret_id = $return_id;
+            } else {
+                # 次が'else'ならfalse側(1段下がったノード)へリンク、それ以外('else if'含む)なら次のノードへリンク
+                my $next_proc = $proc_ref->[$i + 1];
+                if ($next_proc->{'type'} eq 'else') {
+                    $proc_ret_id = sprintf("%s%da0a", $parent_id, $i + 1);
+                } else {
+                    $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
+                }
+            }
+
+            my @next;
+            # falseのlink先を作成
+            push(@next, {
+                    'id'   => $proc_ret_id,
+                    'link' => 'allow',
+                    'text' => 'false',
+                 });
+            
+            # trueのlink先を作成
+            # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
+            push(@next, {
+                'id'   => sprintf("%s0a", $id),
+                'link' => 'allow',
+                'text' => 'true'
+                });
+
+            push(@$node_ref, {
+                    'id'    => $id,
+                    'shape' => 'diamond',
+                    'text'  => $proc->{'conditions'}->[0],
+                    'next'  => \@next,
+                 });
+
+            # procを再帰呼び出しで作成。
+            &proc2node($node_ref, $proc->{'proc'}, $id, $return_id);
+#        } elsif ($type eq 'else if') {
+        } elsif ($type eq 'else') {
+            my $id = sprintf("%s%da", $parent_id, $i);
+            my $proc_ret_id = $i == $#{$proc_ref} ? $return_id : sprintf("%s%da", $parent_id, $i + 1);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
+        }
+    }
+    
+}
+
+sub gen_mermaid {
+    my $self = shift;
+    my $functions = $self->{'functions'};
+
+    print <<EOL;
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>mermaid</title>
+
+    <link href="mermaid.css" rel="stylesheet" type="text/css"/>
+    <script src="mermaid.js"></script>
+
+</head>
+
+<body class="index">
+EOL
+
+    foreach (@{$functions}) {
+        my $function = $_;
+        printf("<div class=\"mermaid\">graph TB\n");
+        printf("subgraph Figure %s\n", $function->{'name'});
+
+        foreach (@{$function->{'node'}}) {
+            my $node = $_;
+            my $shape = $node->{'shape'};
+            my ($shape_b, $shape_e); # shape begin/end
+
+            if ($shape eq 'square') {
+                ($shape_b, $shape_e) = ('[', ']');
+            } elsif ($shape eq 'round square') {
+                ($shape_b, $shape_e) = ('(', ')');
+            } elsif ($shape eq 'circle') {
+                ($shape_b, $shape_e) = ('((', '))');
+            } elsif ($shape eq 'diamond') {
+                ($shape_b, $shape_e) = ('{', '}');
+            } else {
+                printf("unknown shape: %s\n", $shape);
+                die;
+            }
+
+            if (defined($node->{'next'})) {
+                my $next_ref = $node->{'next'};
+                foreach (@{$next_ref}) {
+                    my $next = $_;
+                    my $link_text = '';
+                    if (defined($next->{'text'}) && ($next->{'text'} ne '')) { $link_text = '|"' . $next->{'text'} . '"|'; }
+                    printf("%s%s\"%s\"%s-->%s%s\n",
+                           $node->{'id'}, $shape_b, $node->{'text'}, $shape_e, $link_text, $next->{'id'});
+                }
+            } else {
+                printf("%s%s%s%s\n",
+                       $node->{'id'}, $shape_b, $node->{'text'}, $shape_e);
+            }
+        }
+        
+        printf("end\n"); # subgraph end
+        printf("</div>\n");
+
+        # sq[Square shape] --> ci((Circle shape))
+        # od>Odd shape]-- Two line<br>edge comment --> ro
+        # di{Diamond with <br/> line break} -.-> ro(Rounded<br>square<br>shape)
+        # di==>ro2(Rounded square shape)
+        # %% Notice that no text in shape are added here instead that is appended further down
+        # e --> od3>Really long text with linebreak<br>in an Odd shape]
+        # %% Comments after double percent signs
+        # e((Inner / circle<br>and some odd <br>special characters)) --> f(a)
+        # cyr[Cyrillic]-->cyr2((Circle shape));
+
+        # classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        # classDef orange fill:#f96,stroke:#333,stroke-width:4px;
+        # class sq,e green
+        # class di orange
+    }
+
+    print <<EOL;
+</body>
+</html>
+EOL
+    
+}
+
+
 # 最終的にはXML出力にしてみたいが、時間が無いのでproc構造体をHTML出力し易いように変換するのみ
 # 必要な情報
 # - id

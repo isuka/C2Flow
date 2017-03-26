@@ -12,6 +12,8 @@ my $p = C2Flow->new();
 $p->read($file_name);
 $p->div_function();
 $p->div_control();
-$p->conv_func();
-$p->gen_html();
+$p->gen_node();
+$p->gen_mermaid();
+#$p->conv_func();
+#$p->gen_html();
 
