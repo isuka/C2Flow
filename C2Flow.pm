@@ -445,30 +445,27 @@ sub source2proc {
             $ctrl_ref = $ctrl_refs[$#ctrl_refs];
         } else {
             if ($ctrls[$#ctrls] eq '') {
+                my $type = ($line =~ m/(?:return|exit)/) ? 'ctrl' : 'proc';
                 push(@proc, {
-                    'type' => 'proc',
-                    'code' => $line
+                        'type' => $type,
+                        'code' => $line
                      });
             } elsif ($ctrls[$#ctrls] eq 'switch') {
-                if ($line =~ m/break/) {
-                    push(@{$ctrl_ref->{'proc'}}, {
-                        'type' => 'ctrl',
-                        'code' => $line,
-                         });
-                } else {
-                    push(@{$ctrl_ref->{'proc'}}, {
-                        'type' => 'proc',
-                        'code' => $line
-                         });
-                }
-            } elsif ($ctrls[$#ctrls] eq 'if') {
+                my $type = ($line =~ m/(?:return|exit|break)/) ? 'ctrl' : 'proc';;
                 push(@{$ctrl_ref->{'proc'}}, {
-                    'type' => 'proc',
+                        'type' => $type,
+                        'code' => $line
+                     });
+            } elsif ($ctrls[$#ctrls] eq 'if') {
+                my $type = ($line =~ m/(?:return|exit)/) ? 'ctrl' : 'proc';
+                push(@{$ctrl_ref->{'proc'}}, {
+                    'type' => $type,
                     'code' => $line
                      });
             } else {
+                my $type = ($line =~ m/(?:return|exit)/) ? 'ctrl' : 'proc';
                 push(@{$ctrl_ref->{'proc'}}, {
-                    'type' => 'proc',
+                    'type' => $type,
                     'code' => $line
                      });
             }
@@ -722,8 +719,12 @@ sub proc2node {
                 # 先頭のcase文なら何もしない
                 if ($i == 0) { next; }
                 
-                # 一つ前の処理がbreakなら何もしない
+                # 一つ前の処理がreturnまたはexitなら何もしない
                 my $prev_proc = $proc_ref->[$i - 1];;
+                if (($prev_proc->{'type'} eq 'proc') && ($prev_proc->{'code'} =~ m/return/)) { next; }
+                if (($prev_proc->{'type'} eq 'proc') && ($prev_proc->{'code'} =~ m/exit/))   { next; }
+
+                # 一つ前の処理がbreakなら何もしない
                 if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'break')) { next; }
                 
                 # 一つ前の処理がbreakで無いならlink先を一つ先に繋ぎ変える
@@ -776,14 +777,12 @@ sub proc2node {
 
             # procを再帰呼び出しで作成。
             &proc2node($node_ref, $proc->{'proc'}, $id, $return_id);
-#        } elsif ($type eq 'else if') {
         } elsif ($type eq 'else') {
             my $id = sprintf("%s%da", $parent_id, $i);
             my $proc_ret_id = $i == $#{$proc_ref} ? $return_id : sprintf("%s%da", $parent_id, $i + 1);
             &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
         }
     }
-    
 }
 
 sub gen_mermaid {
@@ -795,7 +794,7 @@ sub gen_mermaid {
 <html>
 <head>
     <meta charset="utf-8">
-    <title>mermaid</title>
+    <title></title>
 
     <link href="mermaid.css" rel="stylesheet" type="text/css"/>
     <script src="mermaid.js"></script>

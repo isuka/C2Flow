@@ -4,3 +4,42 @@ func1 (int argc, char *argv) {
     nop1
 }
 
+// return, exitの場合はtypeがctrlに分類される
+func2 {
+    if (cond1) {
+        return
+    } else if (cond2) {
+        exit
+    } else {
+        return 1
+    }
+}
+
+func3 {
+    switch (cond1) {
+    case fuga
+        return
+    case piyo
+        nop
+        break
+    default
+        exit 1
+    }
+}
+
+func4 {
+    return 1
+    exit 2
+}
+
+func5 {
+    while (cond1) {
+        nop1
+        return 1
+    }
+
+    while (cond2) {
+        nop2
+        exit 2
+    }
+}

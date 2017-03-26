@@ -1098,8 +1098,86 @@ subtest "C2Flow->div_control: misc" => sub {
     @proc = ();
     push(@proc, {'type' => 'proc', 'code' => 'nop1'});
     ok($p->{'functions'}[$fn]->{'name'} eq 'func1 (int argc, char *argv)');
+    $fn++;
+
+    #--- function 2
+    @proc = ();
+    push(@proc, {
+        'type'       => 'if',
+        'conditions' => ['cond1'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'ctrl', 'code' => 'return'},
+                        ]
+         });
+    push(@proc, {
+        'type'       => 'else if',
+        'conditions' => ['cond2'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'ctrl', 'code' => 'exit'},
+                        ]
+         });
+    push(@proc, {
+        'type'       => 'else',
+        'conditions' => ['else'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'ctrl', 'code' => 'return 1'},
+                        ]
+         });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
+
+    #--- function 3
+    @proc = ();
+    push(@proc, {
+        'type'       => 'switch',
+        'conditions' => ['cond1'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'ctrl', 'conditions' => ['fuga'], 'code' => 'case' },
+                            { 'type' => 'ctrl', 'code' => 'return'},
+                            { 'type' => 'ctrl', 'conditions' => ['piyo'], 'code' => 'case' },
+                            { 'type' => 'proc', 'code' => 'nop'},
+                            { 'type' => 'ctrl', 'code' => 'break'},
+                            { 'type' => 'ctrl', 'conditions' => ['default'], 'code' => 'case' },
+                            { 'type' => 'ctrl', 'code' => 'exit 1'},
+                        ]
+         });
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    $fn++;
+
+    #--- function 4
+    @proc = ();
+    push(@proc, {'type' => 'ctrl', 'code' => 'return 1'});
+    push(@proc, {'type' => 'ctrl', 'code' => 'exit 2'});
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    $fn++;
+
+    #--- function 5
+    @proc = ();
+    push(@proc, {
+        'type'       => 'while',
+        'conditions' => ['cond1'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'proc', 'code' => 'nop1' },
+                            { 'type' => 'ctrl', 'code' => 'return 1'},
+                        ]
+         });
+    push(@proc, {
+        'type'       => 'while',
+        'conditions' => ['cond2'],
+        'src'        => '',
+        'proc'       => [
+                            { 'type' => 'proc', 'code' => 'nop2' },
+                            { 'type' => 'ctrl', 'code' => 'exit 2'},
+                        ]
+         });
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    $fn++;
+
 };
 
 #
@@ -1612,6 +1690,107 @@ subtest "C2Flow->gen_node: simple" => sub {
                      ]});
     push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
+
+};
+
+subtest "C2Flow->gen_node: complex" => sub {
+    plan skip_all => 'TBD';
+    my $p = C2Flow->new();
+    my @node; # 処理を格納する配列
+    my $fn = 0;
+
+    $p->read('./t/gen_node02.txt');
+    $p->div_function();
+    $p->div_control();
+    $p->gen_node();
+
+    #--- function 1
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func10',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'false'
+                         },
+                         {
+                             'id'   => 'id0a0a',
+                             'link' => 'allow',
+                             'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+                     'next' => [
+                         {
+                             'id'   => 'id0a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a', 'shape' => 'diamond', 'text' => 'condition2',
+                     'next' => [
+                         {
+                             'id'   => 'id2a0a',
+                             'link' => 'allow',
+                             'text' => 'false'
+                         },
+                         {
+                             'id'   => 'id1a0a',
+                             'link' => 'allow',
+                             'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a0a', 'shape' => 'square', 'text' => 'nop3',
+                     'next' => [
+                         {
+                             'id'   => 'id1a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a1a', 'shape' => 'square', 'text' => 'nop4',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id2a0a', 'shape' => 'square', 'text' => 'nop5',
+                     'next' => [
+                         {
+                             'id'   => 'id2a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id2a1a', 'shape' => 'square', 'text' => 'nop6',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+#    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
 };
