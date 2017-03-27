@@ -511,8 +511,11 @@ sub gen_node {
         # 関数内のノード作成
         &proc2node($function->{'node'}, $function->{'proc'}, 'id', 'return');
         # 関数終了(return)のノード作成
-        # TODO: returnの型(void|non void)に応じてtextを設定する
-        push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+        # @nodeの最後にreturn|exitが無い場合はreturnを生成する
+        my $last_node = $node[$#node];
+        if ($last_node->{'text'} !~ m/(?:return|exit)/) {
+            push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+        }
     }
 }
 
@@ -736,6 +739,12 @@ sub proc2node {
                 my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
                 my $last_next = $prev_next->[$#{$prev_next}];
                 $last_next->{'id'} = $return_id;
+            } elsif ($code =~ m/(?:return|exit)/) {
+                push(@$node_ref, {
+                        'id'    => $id,
+                        'shape' => 'round square',
+                        'text'  => $code,
+                     });
             }
         } elsif (($type eq 'if') || ($type eq 'else if')) {
             my $id = sprintf("%s%da", $parent_id, $i);
