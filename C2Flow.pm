@@ -846,7 +846,7 @@ EOL
                            $node->{'id'}, $shape_b, $node->{'text'}, $shape_e, $link_text, $next->{'id'});
                 }
             } else {
-                printf("%s%s%s%s\n",
+                printf("%s%s\"%s\"%s\n",
                        $node->{'id'}, $shape_b, $node->{'text'}, $shape_e);
             }
         }
