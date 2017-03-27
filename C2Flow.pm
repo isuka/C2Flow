@@ -785,7 +785,17 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id, $return_id);
+            # 戻り先は'else', 'else if'が無くなった次のノードになる
+            $proc_ret_id = $return_id;
+            for (my $j = 1; $i + $j < scalar(@$proc_ref); $j++) {
+                my $next_proc = $proc_ref->[$i + $j];
+                my $next_type = $next_proc->{'type'};
+                if (($next_type eq 'else if') or ($next_type eq 'else')) { next; }
+
+                $proc_ret_id = sprintf("%s%da", $parent_id, $i + $j);
+                last;
+            }
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
         } elsif ($type eq 'else') {
             my $id = sprintf("%s%da", $parent_id, $i);
             my $proc_ret_id = $i == $#{$proc_ref} ? $return_id : sprintf("%s%da", $parent_id, $i + 1);
