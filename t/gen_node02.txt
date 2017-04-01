@@ -78,29 +78,3 @@ func7 {
 
     nop7
 }
-
-func8 ()
-{
-    uint32_t buf[] = {head, body}
-    return
-}
-
-func9 () {
-
-    nop
-
-    switch (comp_sts) {
-    case foo1
-    case foo2
-        nop2
-        break
-    case foo3
-        nop3
-        break
-    default
-        nop4
-        return 4
-    }
-
-    return 0
-}
