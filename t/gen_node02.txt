@@ -78,3 +78,40 @@ func7 {
 
     nop7
 }
+
+// case文が2つ重なるとdefaultの接続先がnop2になってしまう。
+func8 {
+
+    nop
+
+    switch (cond1) {
+    case foo1
+    case foo2
+        nop2
+        break
+    default
+        nop3
+        return 3
+    }
+
+    return 0
+}
+
+func9 {
+
+    nop
+
+    switch (cond1) {
+    case foo1
+    case foo2
+        nop2
+        break
+    case foo3
+    default
+        nop4
+        return 4
+    }
+
+    return 0
+}
+

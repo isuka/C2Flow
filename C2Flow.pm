@@ -527,6 +527,11 @@ sub proc2node {
     my $parent_id = shift;
     my $return_id = shift;
 
+    # switch文内の処理を解析する時、先にcaseのリンク先を作った後、procを生成する。
+    # この時、break無しcaseは下のcase文に処理を繋ぎ直さないとならないので、最初に生成したリンク先を
+    # 編集する必要があるため、何番目のリンク先を繋ぎ直すか覚えておく必要がある。
+    my $sw_case_count = 0;
+
     for (my $i = 0; $i < scalar(@$proc_ref); $i++) {
         my $proc = $proc_ref->[$i];
         my $type = $proc->{'type'};
@@ -720,20 +725,38 @@ sub proc2node {
             my $code = $proc->{'code'};
             if ($code eq 'case') {
                 # 先頭のcase文なら何もしない
-                if ($i == 0) { next; }
+                if ($i == 0) { $sw_case_count++; next; }
                 
                 # 一つ前の処理がreturnまたはexitなら何もしない
                 my $prev_proc = $proc_ref->[$i - 1];;
-                if (($prev_proc->{'type'} eq 'proc') && ($prev_proc->{'code'} =~ m/return/)) { next; }
-                if (($prev_proc->{'type'} eq 'proc') && ($prev_proc->{'code'} =~ m/exit/))   { next; }
+                if (($prev_proc->{'type'} eq 'proc') && ($prev_proc->{'code'} =~ m/return/)) { $sw_case_count++; next; }
+                if (($prev_proc->{'type'} eq 'proc') && ($prev_proc->{'code'} =~ m/exit/))   { $sw_case_count++; next; }
 
                 # 一つ前の処理がbreakなら何もしない
-                if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'break')) { next; }
+                if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'break')) { $sw_case_count++; next; }
                 
+                # 一つ前の処理がcaseならリンクリストのlink先はcase文(フロー図上は存在しない)を示しているので+1してやる必要がある
+                # parent_id(switch=リンク先が格納されたノード)のリファレンスを取得する
+                if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'case')) {
+                    my $prev_next;
+                    foreach (@$node_ref) {
+                        if ($_->{'id'} eq $parent_id) {
+                            $prev_next = $_->{'next'};
+                            last;
+                        }
+                    }
+                    # 今のcaseが何個目のcaseなのかインデックスを持たないとならない
+                    my $last_next = $prev_next->[$sw_case_count];
+                    $last_next->{'id'} = sprintf("%s%da", $parent_id, $i + 1);
+                    $sw_case_count++;
+                    next;
+                }
+
                 # 一つ前の処理がbreakで無いならlink先を一つ先に繋ぎ変える
                 my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
                 my $last_next = $prev_next->[$#{$prev_next}];
                 $last_next->{'id'} = sprintf("%s%da", $parent_id, $i + 1);
+                $sw_case_count++;
             }  elsif ($code eq 'break') {
                 # 一つ前の処理を繋ぎ変える
                 my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
