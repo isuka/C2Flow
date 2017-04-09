@@ -115,3 +115,146 @@ func9 {
     return 0
 }
 
+// 同一種類の解析のネスト
+func10 while nest
+{
+    while (condition1) {
+        nop1
+        while (condition11) {
+            nop11
+            nop12
+        }
+        nop2
+    }
+}
+
+func11 until nest
+{
+    until (condition1) {
+        nop1
+        until (condition10) {
+            nop11
+            nop12
+        }
+        nop2
+    }
+}
+
+func12 do nest
+{
+    do {
+        nop1
+        do {
+            nop11
+            nop12
+        } while (condition10)
+        nop2
+    } while (condition1)
+}
+
+func13 for nest
+{
+    for (condition1) {
+        nop1
+        for (condition10) {
+            nop11
+            nop12
+        }
+        nop2
+    }
+}
+
+func14-1 switch nest
+{
+    switch (condition1) {
+    case fuga
+        switch (condition10) {
+        case fuga10
+            nop11
+            break
+        case piyo10
+            nop12
+        default
+            nop13
+        }
+        nop1
+        break
+    case piyo
+        nop2
+    default
+        nop3
+    }
+}
+
+func14-2 switch nest
+{
+    switch (condition1) {
+    case fuga
+        nop1
+        switch (condition10) {
+        case fuga10
+            nop11
+            break
+        case piyo10
+            nop12
+        default
+            nop13
+        }
+        break
+    case piyo
+        nop2
+    default
+        nop3
+    }
+}
+
+func15 if nest
+{
+    if (condition1) {
+        nop1
+        if (condition10) {
+            nop10
+            nop11
+        } else if (condition11) {
+            nop12
+            nop13
+        } else {
+            nop14
+            nop15
+        }
+        nop2
+    } else if (condition2) {
+        nop3
+        nop4
+    } else {
+        nop5
+        nop6
+    }
+}
+
+// whileの中にifがあり、その中でbreakするとwhileがbreakされず、ただの処理として扱われてしまう
+func10
+{
+    nop1
+    while (1) {
+        nop2
+        if (cond1) {
+            nop3
+            break
+        }
+        nop4
+    }
+    nop5
+}
+
+// 関数名に引数のカッコがあるとsubgraphが表示されない
+// func9 () {
+//     nop
+// }
+
+// C言語の配列定義をブロックステートと勘違いしてしまう
+// func8 ()
+// {
+//     uint32_t buf[] = {head, body}
+//     return
+// }
