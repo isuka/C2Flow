@@ -269,8 +269,8 @@ func16-3 switch case only 3
     nop2
 }
 
-// whileの中にifがあり、その中でbreakするとwhileがbreakされず、ただの処理として扱われてしまう
-func10
+// whileの中にifがあり、その中でbreakするとwhileがbreakされる
+func17 while break from if
 {
     nop1
     while (1) {

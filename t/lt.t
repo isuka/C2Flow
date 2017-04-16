@@ -3009,9 +3009,9 @@ subtest "C2Flow->gen_node: complex" => sub {
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
-    #--- function 10
+    #--- function 17
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func10',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func17 while break from if',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -3056,9 +3056,17 @@ subtest "C2Flow->gen_node: complex" => sub {
                              'text' => 'false'
                          },
                          {
-                             'id'   => 'id2a',
+                             'id'   => 'id1a1a0a',
                              'link' => 'allow',
                              'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a1a0a', 'shape' => 'square', 'text' => 'nop3',
+                     'next' => [
+                         {
+                             'id'   => 'id2a',
+                             'link' => 'allow',
+                             'text' => ''
                          }
                      ]});
     push(@node, {'id' => 'id1a2a', 'shape' => 'square', 'text' => 'nop4',
@@ -3078,7 +3086,7 @@ subtest "C2Flow->gen_node: complex" => sub {
                          }
                      ]});
     push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
-#    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
 };

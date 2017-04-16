@@ -444,28 +444,14 @@ sub source2proc {
             pop(@ctrl_refs);
             $ctrl_ref = $ctrl_refs[$#ctrl_refs];
         } else {
-            if ($ctrls[$#ctrls] eq '') {
-                my $type = ($line =~ m/(?:return|exit)/) ? 'ctrl' : 'proc';
-                push(@proc, {
-                        'type' => $type,
-                        'code' => $line
-                     });
-            } elsif ($ctrls[$#ctrls] eq 'switch') {
-                my $type = ($line =~ m/(?:return|exit|break)/) ? 'ctrl' : 'proc';;
+            if ($line =~ m/(?:return|exit|break)/) {
                 push(@{$ctrl_ref->{'proc'}}, {
-                        'type' => $type,
+                        'type' => 'ctrl',
                         'code' => $line
-                     });
-            } elsif ($ctrls[$#ctrls] eq 'if') {
-                my $type = ($line =~ m/(?:return|exit)/) ? 'ctrl' : 'proc';
-                push(@{$ctrl_ref->{'proc'}}, {
-                    'type' => $type,
-                    'code' => $line
                      });
             } else {
-                my $type = ($line =~ m/(?:return|exit)/) ? 'ctrl' : 'proc';
                 push(@{$ctrl_ref->{'proc'}}, {
-                    'type' => $type,
+                    'type' => 'proc',
                     'code' => $line
                      });
             }
@@ -593,7 +579,7 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id, $id, $id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $id, $proc_ret_id);
         } elsif ($type eq 'until') {
             my $id = sprintf("%s%da", $parent_id, $i);
             my $proc_ret_id;
@@ -627,7 +613,7 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id, $id, $id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $id, $proc_ret_id);
         } elsif ($type eq 'do') {
             # circleとdiamond用のIDを計算
             my $id_a = sprintf("%s%da", $parent_id, $i);
@@ -676,7 +662,7 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id_a, $id_b, $id_b);
+            &proc2node($node_ref, $proc->{'proc'}, $id_a, $id_b, $proc_ret_id);
         } elsif ($type eq 'switch') {
             my $id = sprintf("%s%da", $parent_id, $i);
             my $proc_ret_id;
@@ -764,7 +750,7 @@ sub proc2node {
                 #my $last_next = $prev_next->[$#{$prev_next}];
                 #$last_next->{'id'} = $break_id;
                 
-                # node_ref内でidに一致する
+                # node_ref内でidに一致する宛先をbreak先に変更する
                 for (my $j = 0; $j < scalar(@$node_ref); $j++) {
                     if (!defined($node_ref->[$j]->{'next'})) { next; }
                     my $next_ref = $node_ref->[$j]->{'next'};
@@ -831,11 +817,11 @@ sub proc2node {
                 $proc_ret_id = sprintf("%s%da", $parent_id, $i + $j);
                 last;
             }
-            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $proc_ret_id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $break_id);
         } elsif ($type eq 'else') {
             my $id = sprintf("%s%da", $parent_id, $i);
             my $proc_ret_id = $i == $#{$proc_ref} ? $return_id : sprintf("%s%da", $parent_id, $i + 1);
-            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $proc_ret_id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $break_id);
         }
     }
 }
