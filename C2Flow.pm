@@ -554,7 +554,6 @@ sub proc2node {
             } else {
                 $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
             }
-            #$break_id = $proc_ret_id;
             
             my @next;
             # falseのlink先を作成
@@ -588,7 +587,6 @@ sub proc2node {
             } else {
                 $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
             }
-            #$break_id = $proc_ret_id;
 
             my @next;
             # trueのlink先を作成
@@ -624,7 +622,6 @@ sub proc2node {
             } else {
                 $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
             }
-            #$break_id = $proc_ret_id;
 
             # doの場合は分岐の合流から処理が始まるので、最初はサークルを描く
             push(@$node_ref, {
@@ -671,7 +668,6 @@ sub proc2node {
             } else {
                 $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
             }
-            #$break_id = $proc_ret_id;
             
             # $proc->{'proc'}の中からcase文を全て探してnextにpushする
             my @next;
@@ -745,10 +741,6 @@ sub proc2node {
                 $sw_case_count++;
             }  elsif ($code eq 'break') {
                 my $id = sprintf("%s%da", $parent_id, $i);
-                # 一つ前の処理を繋ぎ変える
-                #my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
-                #my $last_next = $prev_next->[$#{$prev_next}];
-                #$last_next->{'id'} = $break_id;
                 
                 # node_ref内でidに一致する宛先をbreak先に変更する
                 for (my $j = 0; $j < scalar(@$node_ref); $j++) {
