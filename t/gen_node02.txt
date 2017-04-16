@@ -270,12 +270,57 @@ func16-3 switch case only 3
 }
 
 // whileの中にifがあり、その中でbreakするとwhileがbreakされる
-func17 while break from if
+func17-1 while break from if
 {
     nop1
-    while (1) {
+    while (cond1) {
         nop2
-        if (cond1) {
+        if (cond2) {
+            nop3
+            break
+        }
+        nop4
+    }
+    nop5
+}
+
+// untilの中にifがあり、その中でbreakするとwhileがbreakされる
+func17-2 until break from if
+{
+    nop1
+    until (cond1) {
+        nop2
+        if (cond2) {
+            nop3
+            break
+        }
+        nop4
+    }
+    nop5
+}
+
+// doの中にifがあり、その中でbreakするとwhileがbreakされる
+func17-3 do break from if
+{
+    nop1
+    do {
+        nop2
+        if (cond2) {
+            nop3
+            break
+        }
+        nop4
+    } while (cond1)
+    nop5
+}
+
+// forの中にifがあり、その中でbreakするとwhileがbreakされる
+func17-4 for break from if
+{
+    nop1
+    for (cond1) {
+        nop2
+        if (cond2) {
             nop3
             break
         }
