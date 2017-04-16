@@ -232,6 +232,43 @@ func15 if nest
     }
 }
 
+// switchでcaseのあとbreakだけのケース
+func16-1 switch case only 1
+{
+    switch (condition1) {
+    case fuga
+        break
+    case piyo
+    default
+        break
+    }
+}
+
+func16-2 switch case only 2
+{
+    switch (condition1) {
+    case fuga
+    case piyo
+        break
+    default
+        break
+    }
+    nop1
+}
+
+func16-3 switch case only 3
+{
+    switch (condition1) {
+    case fuga
+    case piyo
+        break
+    default
+        nop1
+        break
+    }
+    nop2
+}
+
 // whileの中にifがあり、その中でbreakするとwhileがbreakされず、ただの処理として扱われてしまう
 func10
 {

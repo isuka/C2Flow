@@ -2727,11 +2727,287 @@ subtest "C2Flow->gen_node: complex" => sub {
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
+    #--- function 15
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func15 if nest',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'false'
+                         },
+                         {
+                             'id'   => 'id0a0a',
+                             'link' => 'allow',
+                             'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+                     'next' => [
+                         {
+                             'id'   => 'id0a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a1a', 'shape' => 'diamond', 'text' => 'condition10',
+                     'next' => [
+                         {
+                             'id'   => 'id0a2a',
+                             'link' => 'allow',
+                             'text' => 'false'
+                         },
+                         {
+                             'id'   => 'id0a1a0a',
+                             'link' => 'allow',
+                             'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a1a0a', 'shape' => 'square', 'text' => 'nop10',
+                     'next' => [
+                         {
+                             'id'   => 'id0a1a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a1a1a', 'shape' => 'square', 'text' => 'nop11',
+                     'next' => [
+                         {
+                             'id'   => 'id0a4a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a2a', 'shape' => 'diamond', 'text' => 'condition11',
+                     'next' => [
+                         {
+                             'id'   => 'id0a3a0a',
+                             'link' => 'allow',
+                             'text' => 'false'
+                         },
+                         {
+                             'id'   => 'id0a2a0a',
+                             'link' => 'allow',
+                             'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a2a0a', 'shape' => 'square', 'text' => 'nop12',
+                     'next' => [
+                         {
+                             'id'   => 'id0a2a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a2a1a', 'shape' => 'square', 'text' => 'nop13',
+                     'next' => [
+                         {
+                             'id'   => 'id0a4a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a3a0a', 'shape' => 'square', 'text' => 'nop14',
+                     'next' => [
+                         {
+                             'id'   => 'id0a3a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a3a1a', 'shape' => 'square', 'text' => 'nop15',
+                     'next' => [
+                         {
+                             'id'   => 'id0a4a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a4a', 'shape' => 'square', 'text' => 'nop2',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a', 'shape' => 'diamond', 'text' => 'condition2',
+                     'next' => [
+                         {
+                             'id'   => 'id2a0a',
+                             'link' => 'allow',
+                             'text' => 'false'
+                         },
+                         {
+                             'id'   => 'id1a0a',
+                             'link' => 'allow',
+                             'text' => 'true'
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a0a', 'shape' => 'square', 'text' => 'nop3',
+                     'next' => [
+                         {
+                             'id'   => 'id1a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a1a', 'shape' => 'square', 'text' => 'nop4',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id2a0a', 'shape' => 'square', 'text' => 'nop5',
+                     'next' => [
+                         {
+                             'id'   => 'id2a1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id2a1a', 'shape' => 'square', 'text' => 'nop6',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
 
+    #--- function 16-1
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func16-1 switch case only 1',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => 'fuga'
+                         },
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => 'piyo'
+                         },
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => 'default'
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
 
+    #--- function 16-2
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func16-2 switch case only 2',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'fuga'
+                         },
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'piyo'
+                         },
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'default'
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a', 'shape' => 'square', 'text' => 'nop1',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
 
-
-
+    #--- function 16-3
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func16-3 switch case only 3',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'fuga'
+                         },
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'piyo'
+                         },
+                         {
+                             'id'   => 'id0a4a',
+                             'link' => 'allow',
+                             'text' => 'default'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a4a', 'shape' => 'square', 'text' => 'nop1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a', 'shape' => 'square', 'text' => 'nop2',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
 
     #--- function 10
     @node = ();

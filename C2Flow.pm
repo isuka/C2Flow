@@ -509,7 +509,7 @@ sub gen_node {
                          ]});
         $function->{'node'} = \@node;
         # 関数内のノード作成
-        &proc2node($function->{'node'}, $function->{'proc'}, 'id', 'return');
+        &proc2node($function->{'node'}, $function->{'proc'}, 'id', 'return', 'return');
         # 関数終了(return)のノード作成
         # @nodeの最後にreturn|exitが無い場合はreturnを生成する
         my $last_node = $node[$#node];
@@ -526,6 +526,7 @@ sub proc2node {
     my $proc_ref  = shift;
     my $parent_id = shift;
     my $return_id = shift;
+    my $break_id  = shift;
 
     # switch文内の処理を解析する時、先にcaseのリンク先を作った後、procを生成する。
     # この時、break無しcaseは下のcase文に処理を繋ぎ直さないとならないので、最初に生成したリンク先を
@@ -561,22 +562,21 @@ sub proc2node {
                  });
         } elsif (($type eq 'while') || ($type eq 'for')) {
             my $id = sprintf("%s%da", $parent_id, $i);
-
+            my $proc_ret_id;
+            if ($i == $#{$proc_ref}) {
+                $proc_ret_id = $return_id;
+            } else {
+                $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
+            }
+            #$break_id = $proc_ret_id;
+            
             my @next;
             # falseのlink先を作成
-            if ($i == $#{$proc_ref}) {
-                push(@next, {
-                        'id'   => $return_id,
-                        'link' => 'allow',
-                        'text' => 'false',
-                     });
-            } else {
-                push(@next, {
-                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
-                        'link' => 'allow',
-                        'text' => 'false'
-                     });
-            }
+            push(@next, {
+                'id'   => $proc_ret_id,
+                    'link' => 'allow',
+                    'text' => 'false',
+                 });
             # trueのlink先を作成
             # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
             push(@next, {
@@ -593,25 +593,24 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id, $id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $id, $id);
         } elsif ($type eq 'until') {
             my $id = sprintf("%s%da", $parent_id, $i);
+            my $proc_ret_id;
+            if ($i == $#{$proc_ref}) {
+                $proc_ret_id = $return_id;
+            } else {
+                $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
+            }
+            #$break_id = $proc_ret_id;
 
             my @next;
             # trueのlink先を作成
-            if ($i == $#{$proc_ref}) {
-                push(@next, {
-                        'id'   => $return_id,
-                        'link' => 'allow',
-                        'text' => 'true',
-                     });
-            } else {
-                push(@next, {
-                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
-                        'link' => 'allow',
-                        'text' => 'true'
-                     });
-            }
+            push(@next, {
+                    'id'   => $proc_ret_id,
+                    'link' => 'allow',
+                    'text' => 'true',
+                 });
             # falseのlink先を作成
             # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
             push(@next, {
@@ -628,11 +627,18 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id, $id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $id, $id);
         } elsif ($type eq 'do') {
             # circleとdiamond用のIDを計算
             my $id_a = sprintf("%s%da", $parent_id, $i);
             my $id_b = sprintf("%s%db", $parent_id, $i);
+            my $proc_ret_id;
+            if ($i == $#{$proc_ref}) {
+                $proc_ret_id = $return_id;
+            } else {
+                $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
+            }
+            #$break_id = $proc_ret_id;
 
             # doの場合は分岐の合流から処理が始まるので、最初はサークルを描く
             push(@$node_ref, {
@@ -649,19 +655,11 @@ sub proc2node {
 
             my @next;
             # falseのlink先を作成
-            if ($i == $#{$proc_ref}) {
-                push(@next, {
-                        'id'   => $return_id,
-                        'link' => 'allow',
-                        'text' => 'false',
-                     });
-            } else {
-                push(@next, {
-                        'id'   => sprintf("%s%da", $parent_id, $i + 1),
-                        'link' => 'allow',
-                        'text' => 'false'
-                     });
-            }
+            push(@next, {
+                    'id'   => $proc_ret_id,
+                    'link' => 'allow',
+                    'text' => 'false',
+                 });
             # trueのlink先を作成
             # 再帰呼び出しで1段下がったプロセスになるので、今のIDに1桁増やしたIDになる。
             push(@next, {
@@ -678,10 +676,17 @@ sub proc2node {
                  });
 
             # procを再帰呼び出しで作成。
-            &proc2node($node_ref, $proc->{'proc'}, $id_a, $id_b);
+            &proc2node($node_ref, $proc->{'proc'}, $id_a, $id_b, $id_b);
         } elsif ($type eq 'switch') {
             my $id = sprintf("%s%da", $parent_id, $i);
-
+            my $proc_ret_id;
+            if ($i == $#{$proc_ref}) {
+                $proc_ret_id = $return_id;
+            } else {
+                $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
+            }
+            #$break_id = $proc_ret_id;
+            
             # $proc->{'proc'}の中からcase文を全て探してnextにpushする
             my @next;
             my $sw_proc = $proc->{'proc'};
@@ -711,14 +716,9 @@ sub proc2node {
                     'next'  => \@next,
                  });
 
-            # while内のprocを再帰呼び出しで作成。
+            # switch内のprocを再帰呼び出しで作成。
             # switchは条件の次の要素が戻り先になるので、proc_refが最後ならreturn_idが戻り先になる
-            if ($i == $#{$proc_ref}) {
-                &proc2node($node_ref, $proc->{'proc'}, $id, $return_id);
-            } else {
-                my $proc_ret_id = sprintf("%s%da", $parent_id, $i + 1);
-                &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
-            }
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $proc_ret_id);
         } elsif ($type eq 'ctrl') {
             my $id = sprintf("%s%da", $parent_id, $i);
             
@@ -758,10 +758,23 @@ sub proc2node {
                 $last_next->{'id'} = sprintf("%s%da", $parent_id, $i + 1);
                 $sw_case_count++;
             }  elsif ($code eq 'break') {
+                my $id = sprintf("%s%da", $parent_id, $i);
                 # 一つ前の処理を繋ぎ変える
-                my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
-                my $last_next = $prev_next->[$#{$prev_next}];
-                $last_next->{'id'} = $return_id;
+                #my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
+                #my $last_next = $prev_next->[$#{$prev_next}];
+                #$last_next->{'id'} = $break_id;
+                
+                # node_ref内でidに一致する
+                for (my $j = 0; $j < scalar(@$node_ref); $j++) {
+                    if (!defined($node_ref->[$j]->{'next'})) { next; }
+                    my $next_ref = $node_ref->[$j]->{'next'};
+                    for (my $k = 0; $k < scalar(@$next_ref); $k++) {
+                        my $node_ref = $next_ref->[$k];
+                        if ($node_ref->{'id'} eq $id) {
+                            $node_ref->{'id'} = $break_id;
+                        }
+                    }
+                }
             } elsif ($code =~ m/(?:return|exit)/) {
                 push(@$node_ref, {
                         'id'    => $id,
@@ -818,11 +831,11 @@ sub proc2node {
                 $proc_ret_id = sprintf("%s%da", $parent_id, $i + $j);
                 last;
             }
-            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $proc_ret_id);
         } elsif ($type eq 'else') {
             my $id = sprintf("%s%da", $parent_id, $i);
             my $proc_ret_id = $i == $#{$proc_ref} ? $return_id : sprintf("%s%da", $parent_id, $i + 1);
-            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id);
+            &proc2node($node_ref, $proc->{'proc'}, $id, $proc_ret_id, $proc_ret_id);
         }
     }
 }
