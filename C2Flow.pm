@@ -127,7 +127,7 @@ sub read {
         s/[\r\n]+$/\n/; # 改行コードを\nに統一
         s/\t/ /g;       # タブを空白に置換
         s/　/  /g;      # 全角空白を半角空白x2に置換
-        s/\/\/.*$//; # 一行コメントを削除
+        s/\/\/.*$//;    # 一行コメントを削除
         ${$self->{'read_src'}} .= $_;
     }
     ${$self->{'read_src'}} =~ s/\/\*.*?\*\///gs; # コメント行を削除
@@ -444,10 +444,10 @@ sub source2proc {
             pop(@ctrl_refs);
             $ctrl_ref = $ctrl_refs[$#ctrl_refs];
         } else {
-            if ($line =~ m/(?:return|exit|break)/) {
+            if ($line =~ m/(return|exit|break)/) {
                 push(@{$ctrl_ref->{'proc'}}, {
                         'type' => 'ctrl',
-                        'code' => $line
+                        'code' => $1
                      });
             } else {
                 push(@{$ctrl_ref->{'proc'}}, {
