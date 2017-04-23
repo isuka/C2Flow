@@ -269,6 +269,20 @@ func16-3 switch case only 3
     nop2
 }
 
+func16-4 switch multi case
+{
+    switch (condition1) {
+    case fuga
+    case piyo
+    case hogehoge
+        break
+    default
+        nop1
+        break
+    }
+    nop2
+}
+
 // whileの中にifがあり、その中でbreakするとwhileがbreakされる
 func17-1 while break from if
 {

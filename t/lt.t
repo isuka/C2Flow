@@ -3009,6 +3009,59 @@ subtest "C2Flow->gen_node: complex" => sub {
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
+    #--- function 16-4
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func16-4 switch multi case',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'fuga'
+                         },
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'piyo'
+                         },
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => 'hogehoge'
+                         },
+                         {
+                             'id'   => 'id0a5a',
+                             'link' => 'allow',
+                             'text' => 'default'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a5a', 'shape' => 'square', 'text' => 'nop1',
+                     'next' => [
+                         {
+                             'id'   => 'id1a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id1a', 'shape' => 'square', 'text' => 'nop2',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
+
     #--- function 17-1
     @node = ();
     push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func17-1 while break from if',

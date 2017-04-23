@@ -675,6 +675,7 @@ sub proc2node {
             for (my $j = 0; $j < scalar(@$sw_proc); $j++) {
                 my $sw_type = $sw_proc->[$j]->{'type'};
                 
+                # sw_proc内にあるcase文を探す
                 if (($sw_type eq 'ctrl') && ($sw_proc->[$j]->{'code'} eq 'case')) {
                     # switchからの接続先はcase文の次なので、link先のidはcaseが無くなった先を探す
                     for (my $k = 1; $k < scalar(@$sw_proc); $k++) {
@@ -717,22 +718,8 @@ sub proc2node {
                 # 一つ前の処理がbreakなら何もしない
                 if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'break')) { $sw_case_count++; next; }
                 
-                # 一つ前の処理がcaseならリンクリストのlink先はcase文(フロー図上は存在しない)を示しているので+1してやる必要がある
-                # parent_id(switch=リンク先が格納されたノード)のリファレンスを取得する
-                if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'case')) {
-                    my $prev_next;
-                    foreach (@$node_ref) {
-                        if ($_->{'id'} eq $parent_id) {
-                            $prev_next = $_->{'next'};
-                            last;
-                        }
-                    }
-                    # 今のcaseが何個目のcaseなのかインデックスを持たないとならない
-                    my $last_next = $prev_next->[$sw_case_count];
-                    $last_next->{'id'} = sprintf("%s%da", $parent_id, $i + 1);
-                    $sw_case_count++;
-                    next;
-                }
+                # 一つ前の処理がcaseならリンクリストのlink先はswitch文の処理で作成済なので何もしない
+                if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'case')) { $sw_case_count++; next; }
 
                 # 一つ前の処理がbreakで無いならlink先を一つ先に繋ぎ変える
                 my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
