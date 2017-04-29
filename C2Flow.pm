@@ -444,7 +444,12 @@ sub source2proc {
             pop(@ctrl_refs);
             $ctrl_ref = $ctrl_refs[$#ctrl_refs];
         } else {
-            if ($line =~ m/(return|exit|break)/) {
+            if ($line =~ m/(?:return|exit)/) {
+                push(@{$ctrl_ref->{'proc'}}, {
+                        'type' => 'ctrl',
+                        'code' => $line
+                     });
+            } elsif ($line =~ m/(break)/) {
                 push(@{$ctrl_ref->{'proc'}}, {
                         'type' => 'ctrl',
                         'code' => $1
