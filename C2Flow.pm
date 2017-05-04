@@ -332,7 +332,7 @@ sub source2proc {
                     'code'       => 'case',
                     );
                 push(@conditions, $condition); # type=caseの場合conditionのメンバー数は1
-                
+
                 push(@{$ctrl_ref->{'proc'}}, \%f_case);
             } elsif (($ctrls[$#ctrls] eq 'switch') && ($match_ctrl eq 'default')) {
                 # @conditionsにpushした同一インデックスの@procにprocハッシュ作成
@@ -365,6 +365,7 @@ sub source2proc {
                 # elseで中括弧が閉じられたらそこまでのsrcをprocに分解するため再帰呼び出しを行う。
                 if (($match_ctrl eq 'else') || ($match_ctrl eq 'else if')) {
                     &source2proc($ctrl_ref);
+                    pop(@ctrls);
                     $depth--;
                     pop(@ctrl_refs);
                     $ctrl_ref = $ctrl_refs[$#ctrl_refs];
@@ -413,6 +414,7 @@ sub source2proc {
                     'src'        => '',
                     'proc'       => \@proc_child,
                     );
+
                 push(@{$ctrl_ref->{'proc'}}, \%noname_hash);
                 # 次のカレントは作成したハッシュになるので、ctrl_refsとctrl_refを更新する
                 push(@ctrl_refs, \%noname_hash);
@@ -726,10 +728,19 @@ sub proc2node {
                 # 一つ前の処理がcaseならリンクリストのlink先はswitch文の処理で作成済なので何もしない
                 if (($prev_proc->{'type'} eq 'ctrl') && ($prev_proc->{'code'} eq 'case')) { $sw_case_count++; next; }
 
-                # 一つ前の処理がbreakで無いならlink先を一つ先に繋ぎ変える
-                my $prev_next = $node_ref->[$#{$node_ref}]->{'next'};
-                my $last_next = $prev_next->[$#{$prev_next}];
-                $last_next->{'id'} = sprintf("%s%da", $parent_id, $i + 1);
+                # node_ref内でidに一致する宛先を一つ先に繋ぎ変える
+                my $next_id = sprintf("%s%da", $parent_id, $i + 1);
+                for (my $j = 0; $j < scalar(@$node_ref); $j++) {
+                    if (!defined($node_ref->[$j]->{'next'})) { next; }
+                    my $next_ref = $node_ref->[$j]->{'next'};
+                    for (my $k = 0; $k < scalar(@$next_ref); $k++) {
+                        my $node_ref = $next_ref->[$k];
+                        if ($node_ref->{'id'} eq $id) {
+                            $node_ref->{'id'} = $next_id;
+                        }
+                    }
+                }
+                
                 $sw_case_count++;
             }  elsif ($code eq 'break') {
                 my $id = sprintf("%s%da", $parent_id, $i);

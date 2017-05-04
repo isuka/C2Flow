@@ -359,6 +359,35 @@ func17-4 for break from if
     nop5
 }
 
+func 17-5 switch break from if
+{
+    switch (cond1) {
+    case hoge1
+        if (cond2) {
+            nop11
+        } else {
+            nop12
+        }
+        break
+    default
+        nop d
+    }
+}
+
+func 17-6 switch break from if
+{
+    switch (cond1) {
+    case hoge1
+        if (cond2) {
+            nop11
+        } else {
+            nop12
+        }
+    default
+        nop d
+    }
+}
+
 // 関数名に引数のカッコがあるとsubgraphが表示されない
 // func9 () {
 //     nop
