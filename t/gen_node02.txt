@@ -388,6 +388,125 @@ func 17-6 switch break from if
     }
 }
 
+func 17-7 switch break from if
+{
+    switch (cond1) {
+    case hoge1
+        if (cond2) {
+            nop11
+        } else if (cond3){
+            nop12
+        } else {
+            nop13
+        }
+    case hoge2
+        if (cond4) {
+            nop21
+        } else if (cond5){
+            nop22
+        } else {
+            nop23
+        }
+    default
+        if (cond6) {
+            nop31
+        } else if (cond7){
+            nop32
+        } else {
+            nop33
+        }
+    }
+}
+
+// 処理の無い分岐
+func 18-1
+{
+    while (cond1) {
+    }
+}
+
+func 18-2
+{
+    for (cond1) {
+    }
+}
+
+func 18-3
+{
+    until (cond1) {
+    }
+}
+
+func 18-4
+{
+    do {
+    } while(cond1)
+}
+
+func 18-5
+{
+    switch (cond1) {
+    }
+}
+
+func 18-6
+{
+    if (cond1) {
+    } else if (cond2) {
+    } else {
+    }
+}
+
+func 19-1
+{
+    nop1
+    while (cond1) {
+    }
+    nop2
+}
+
+func 19-2
+{
+    nop1
+    for (cond1) {
+    }
+    nop2
+}
+
+func 19-3
+{
+    nop1
+    until (cond1) {
+    }
+    nop2
+}
+
+func 19-4
+{
+    nop1
+    do {
+    } while(cond1)
+    nop2
+}
+
+func 19-5
+{
+    nop1
+    switch (cond1) {
+    }
+    nop2
+}
+
+func 19-6
+{
+    nop1
+    if (cond1) {
+    } else if (cond2) {
+    } else {
+    }
+    nop2
+}
+
 // 関数名に引数のカッコがあるとsubgraphが表示されない
 // func9 () {
 //     nop
