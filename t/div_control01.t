@@ -23,8 +23,8 @@ subtest "C2Flow->div_control: simple" => sub {
 
     #--- function 1
     @proc = ();
-    push(@proc, {'type' => 'proc', 'code' => 'nop1'});
-    push(@proc, {'type' => 'proc', 'code' => 'nop2'});
+    push(@proc, {'type' => 'proc', 'code' => 'nop1', 'css' => 'diff=,'});
+    push(@proc, {'type' => 'proc', 'code' => 'nop2', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
 
@@ -34,7 +34,8 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'while',
         'conditions' => ['condition1'],
         'src'        => '',
-        'proc'       => [{ 'type' => 'proc', 'code' => 'nop' }]
+        'css'        => 'diff=,',
+        'proc'       => [{ 'type' => 'proc', 'code' => 'nop', 'css' => 'diff=,' }]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
@@ -45,7 +46,8 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'until',
         'conditions' => ['condition1'],
         'src'        => '',
-        'proc'       => [{ 'type' => 'proc', 'code' => 'nop' }]
+        'css'        => 'diff=,',
+        'proc'       => [{ 'type' => 'proc', 'code' => 'nop', 'css' => 'diff=,' }]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
@@ -56,7 +58,8 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'do',
         'conditions' => ['condition1'],
         'src'        => '',
-        'proc'       => [{ 'type' => 'proc', 'code' => 'nop' }]
+        'css'        => 'diff=,',
+        'proc'       => [{ 'type' => 'proc', 'code' => 'nop', 'css' => 'diff=,' }]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
@@ -67,7 +70,8 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'for',
         'conditions' => ['condition1'],
         'src'        => '',
-        'proc'       => [{ 'type' => 'proc', 'code' => 'nop' }]
+        'css'        => 'diff=,',
+        'proc'       => [{ 'type' => 'proc', 'code' => 'nop', 'css' => 'diff=,' }]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
@@ -78,7 +82,8 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'for',
         'conditions' => ['i = 0; i < hoge; i++'],
         'src'        => '',
-        'proc'       => [{ 'type' => 'proc', 'code' => 'nop' }]
+        'css'        => 'diff=,',
+        'proc'       => [{ 'type' => 'proc', 'code' => 'nop', 'css' => 'diff=,' }]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
@@ -89,14 +94,15 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'switch',
         'conditions' => ['condition1'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'ctrl', 'conditions' => ['fuga'], 'code' => 'case' },
-                            { 'type' => 'proc', 'code' => 'nop1'},
-                            { 'type' => 'ctrl', 'code' => 'break'},
-                            { 'type' => 'ctrl', 'conditions' => ['piyo'], 'code' => 'case' },
-                            { 'type' => 'proc', 'code' => 'nop2'},
-                            { 'type' => 'ctrl', 'conditions' => ['default'], 'code' => 'case' },
-                            { 'type' => 'proc', 'code' => 'nop3'},
+                            { 'type' => 'ctrl', 'conditions' => ['fuga'], 'code' => 'case', 'css' => 'diff=,' },
+                            { 'type' => 'proc', 'code' => 'nop1', 'css' => 'diff=,' },
+                            { 'type' => 'ctrl', 'code' => 'break', 'css' => 'diff=,' },
+                            { 'type' => 'ctrl', 'conditions' => ['piyo'], 'code' => 'case', 'css' => 'diff=,' },
+                            { 'type' => 'proc', 'code' => 'nop2', 'css' => 'diff=,' },
+                            { 'type' => 'ctrl', 'conditions' => ['default'], 'code' => 'case', 'css' => 'diff=,' },
+                            { 'type' => 'proc', 'code' => 'nop3', 'css' => 'diff=,' },
                         ]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
@@ -108,7 +114,8 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'if',
         'conditions' => ['condition1'],
         'src'        => '',
-        'proc'       => [{ 'type' => 'proc', 'code' => 'nop' }]
+        'css'        => 'diff=,',
+        'proc'       => [{ 'type' => 'proc', 'code' => 'nop', 'css' => 'diff=,' }]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
     $fn++;
@@ -119,16 +126,18 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'if',
         'conditions' => ['condition1'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'proc', 'code' => 'nop1'},
+                            { 'type' => 'proc', 'code' => 'nop1', 'css' => 'diff=,' },
                         ]
          });
     push(@proc, {
         'type'       => 'else',
         'conditions' => ['else'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'proc', 'code' => 'nop2'},
+                            { 'type' => 'proc', 'code' => 'nop2', 'css' => 'diff=,' },
                         ]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
@@ -140,24 +149,27 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'if',
         'conditions' => ['condition1'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'proc', 'code' => 'nop1'},
+                            { 'type' => 'proc', 'code' => 'nop1', 'css' => 'diff=,'},
                         ]
          });
     push(@proc, {
         'type'       => 'else if',
         'conditions' => ['condition2'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                              { 'type' => 'proc', 'code' => 'nop2'},
+                              { 'type' => 'proc', 'code' => 'nop2', 'css' => 'diff=,' },
                         ]
          });
     push(@proc, {
         'type'       => 'else',
         'conditions' => ['else'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'proc', 'code' => 'nop3'},
+                            { 'type' => 'proc', 'code' => 'nop3', 'css' => 'diff=,' },
                         ]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
@@ -169,24 +181,27 @@ subtest "C2Flow->div_control: simple" => sub {
         'type'       => 'if',
         'conditions' => ['condition1'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'proc', 'code' => 'nop1'},
+                            { 'type' => 'proc', 'code' => 'nop1', 'css' => 'diff=,' },
                         ]
          });
     push(@proc, {
         'type'       => 'else if',
         'conditions' => ['condition2'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                              { 'type' => 'proc', 'code' => 'nop2'},
+                              { 'type' => 'proc', 'code' => 'nop2', 'css' => 'diff=,' },
                         ]
          });
     push(@proc, {
         'type'       => 'else',
         'conditions' => ['else'],
         'src'        => '',
+        'css'        => 'diff=,',
         'proc'       => [
-                            { 'type' => 'proc', 'code' => 'nop3'},
+                            { 'type' => 'proc', 'code' => 'nop3', 'css' => 'diff=,' },
                         ]
          });
     is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};

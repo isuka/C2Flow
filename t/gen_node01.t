@@ -24,15 +24,15 @@ subtest "C2Flow->gen_node: simple" => sub {
 
     #--- function 1
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func1',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
                              'link' => 'allow',
-                             'text' => ''
+                             'text' => '',
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id1a',
@@ -40,7 +40,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -48,13 +48,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 2
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func2',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -62,7 +62,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -75,7 +75,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -83,7 +83,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -91,13 +91,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 3
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func3',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func3', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -105,7 +105,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -118,7 +118,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'false'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -126,7 +126,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -134,13 +134,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 4
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func4',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func4', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -148,7 +148,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'circle', 'text' => ' ',
+    push(@node, {'id' => 'id0a', 'shape' => 'circle', 'text' => ' ', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a0a',
@@ -156,7 +156,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0b', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0b', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -169,7 +169,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -177,7 +177,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0b',
@@ -185,13 +185,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 5
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func5',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func5', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -199,7 +199,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -212,7 +212,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -220,7 +220,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -228,13 +228,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 6
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func6',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func6', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -242,7 +242,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'i = 0; i < hoge; i++',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'i = 0; i < hoge; i++', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -255,7 +255,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -263,7 +263,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -271,13 +271,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 7
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func7',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func7', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -285,7 +285,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -303,7 +303,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'default'
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -311,7 +311,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a4a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a4a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a6a',
@@ -319,7 +319,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a6a', 'shape' => 'square', 'text' => 'nop3',
+    push(@node, {'id' => 'id0a6a', 'shape' => 'square', 'text' => 'nop3', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -327,13 +327,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 8
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func8',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func8', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -341,7 +341,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -354,7 +354,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -362,7 +362,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -370,13 +370,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 9
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func9',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func9', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -384,7 +384,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id1a0a',
@@ -397,7 +397,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -405,7 +405,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -413,7 +413,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id1a0a', 'shape' => 'square', 'text' => 'nop3',
+    push(@node, {'id' => 'id1a0a', 'shape' => 'square', 'text' => 'nop3', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id1a1a',
@@ -421,7 +421,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id1a1a', 'shape' => 'square', 'text' => 'nop4',
+    push(@node, {'id' => 'id1a1a', 'shape' => 'square', 'text' => 'nop4', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -429,13 +429,13 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 
     #--- function 10
     @node = ();
-    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func10',
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func10', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a',
@@ -443,7 +443,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1',
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id1a',
@@ -456,7 +456,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1',
+    push(@node, {'id' => 'id0a0a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id0a1a',
@@ -464,7 +464,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2',
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -472,7 +472,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id1a', 'shape' => 'diamond', 'text' => 'condition2',
+    push(@node, {'id' => 'id1a', 'shape' => 'diamond', 'text' => 'condition2', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id2a0a',
@@ -485,7 +485,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => 'true'
                          }
                      ]});
-    push(@node, {'id' => 'id1a0a', 'shape' => 'square', 'text' => 'nop3',
+    push(@node, {'id' => 'id1a0a', 'shape' => 'square', 'text' => 'nop3', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id1a1a',
@@ -493,7 +493,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id1a1a', 'shape' => 'square', 'text' => 'nop4',
+    push(@node, {'id' => 'id1a1a', 'shape' => 'square', 'text' => 'nop4', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -501,7 +501,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id2a0a', 'shape' => 'square', 'text' => 'nop5',
+    push(@node, {'id' => 'id2a0a', 'shape' => 'square', 'text' => 'nop5', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'id2a1a',
@@ -509,7 +509,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'id2a1a', 'shape' => 'square', 'text' => 'nop6',
+    push(@node, {'id' => 'id2a1a', 'shape' => 'square', 'text' => 'nop6', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
@@ -517,7 +517,7 @@ subtest "C2Flow->gen_node: simple" => sub {
                              'text' => ''
                          }
                      ]});
-    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
     is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
     $fn++;
 

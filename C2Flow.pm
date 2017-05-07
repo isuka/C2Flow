@@ -290,9 +290,17 @@ sub source2proc {
     $f->{'src'} = '';
 
     foreach my $line (split(/\n/, $src)) {
+        my $src_ctrl = '';
         # $srcが''(procに分割済)の時に再起呼び出しされるとprocを別のリファレンスで
         # 書き潰してしまうので冗長だがこの位置でリファレンス代入
         $f->{'proc'} = \@proc;
+
+        # 行頭のunified diff形式を解釈する。
+        if ($line =~ s/^([\+\-]) //) {
+            $src_ctrl = 'diff=' . $1 . ',';
+        } else {
+            $src_ctrl = 'diff=,';
+        }
 
         # 行頭と行末の空白を削除
         $line =~ s/^ +//;
@@ -330,6 +338,7 @@ sub source2proc {
                     'type'       => 'ctrl',
                     'conditions' => \@conditions,
                     'code'       => 'case',
+                    'css'        => $src_ctrl,
                     );
                 push(@conditions, $condition); # type=caseの場合conditionのメンバー数は1
 
@@ -342,6 +351,7 @@ sub source2proc {
                     'type'       => 'ctrl',
                     'conditions' => \@conditions,
                     'code'       => 'case',
+                    'css'        => $src_ctrl,
                     );
                 push(@conditions, 'default'); # defaultのconditionはdefaultとする
                 
@@ -413,6 +423,7 @@ sub source2proc {
                     'conditions' => \@conditions,
                     'src'        => '',
                     'proc'       => \@proc_child,
+                    'css'        => $src_ctrl,
                     );
 
                 push(@{$ctrl_ref->{'proc'}}, \%noname_hash);
@@ -448,18 +459,21 @@ sub source2proc {
         } else {
             if ($line =~ m/(?:return|exit)/) {
                 push(@{$ctrl_ref->{'proc'}}, {
-                        'type' => 'ctrl',
-                        'code' => $line
+                         'type'    => 'ctrl',
+                         'code'    => $line,
+                         'css'     => $src_ctrl,
                      });
             } elsif ($line =~ m/(break)/) {
                 push(@{$ctrl_ref->{'proc'}}, {
-                        'type' => 'ctrl',
-                        'code' => $1
+                         'type'    => 'ctrl',
+                         'code'    => $1,
+                         'css'     => $src_ctrl,
                      });
             } else {
                 push(@{$ctrl_ref->{'proc'}}, {
-                    'type' => 'proc',
-                    'code' => $line
+                        'type'    => 'proc',
+                        'code'    => $line,
+                        'css'     => $src_ctrl,
                      });
             }
         }
@@ -492,12 +506,12 @@ sub gen_node {
         my @node;
         
         # 関数開始のノード作成
-        push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => $function->{'name'},
+        push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => $function->{'name'}, 'css' => 'diff=,',
                          'next' => [
                              {
-                                 'id' => 'id0a',
+                                 'id'   => 'id0a',
                                  'link' => 'allow',
-                                 'text' => ''
+                                 'text' => '',
                              }
                          ]});
         $function->{'node'} = \@node;
@@ -507,7 +521,7 @@ sub gen_node {
         # @nodeの最後にreturn|exitが無い場合はreturnを生成する
         my $last_node = $node[$#node];
         if ($last_node->{'text'} !~ m/(?:return|exit)/) {
-            push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return'});
+            push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
         }
     }
 }
@@ -529,6 +543,7 @@ sub proc2node {
     for (my $i = 0; $i < scalar(@$proc_ref); $i++) {
         my $proc = $proc_ref->[$i];
         my $type = $proc->{'type'};
+        my $css  = $proc->{'css'};
         if ($type eq 'proc') {
             my $id = sprintf("%s%da", $parent_id, $i);
 
@@ -551,6 +566,7 @@ sub proc2node {
                     'id'    => $id,
                     'shape' => 'square',
                     'text'  => $proc->{'code'},
+                    'css'   => $css,
                     'next'  => \@next
                  });
         } elsif (($type eq 'while') || ($type eq 'for')) {
@@ -590,6 +606,7 @@ sub proc2node {
                     'id'    => $id,
                     'shape' => 'diamond',
                     'text'  => $proc->{'conditions'}->[0],
+                    'css'   => $css,
                     'next'  => \@next,
                  });
 
@@ -634,6 +651,7 @@ sub proc2node {
                     'id'    => $id,
                     'shape' => 'diamond',
                     'text'  => $proc->{'conditions'}->[0],
+                    'css'   => $css,
                     'next'  => \@next,
                  });
 
@@ -659,6 +677,7 @@ sub proc2node {
                         'id'    => $id_a,
                         'shape' => 'circle',
                         'text'  => ' ',
+                        'css'   => $css,
                         'next'  => [
                             {
                                 'id' => sprintf("%s0a", $id_a),
@@ -672,6 +691,7 @@ sub proc2node {
                         'id'    => $id_a,
                         'shape' => 'circle',
                         'text'  => ' ',
+                        'css'   => $css,
                         'next'  => [
                             {
                                 'id' => $id_b,
@@ -700,6 +720,7 @@ sub proc2node {
                     'id'    => $id_b,
                     'shape' => 'diamond',
                     'text'  => $proc->{'conditions'}->[0],
+                    'css'   => $css,
                     'next'  => \@next,
                  });
 
@@ -744,6 +765,7 @@ sub proc2node {
                         'id'    => $id,
                         'shape' => 'diamond',
                         'text'  => $proc->{'conditions'}->[0],
+                        'css'   => $css,
                         'next'  => \@next,
                      });
             } else {
@@ -757,6 +779,7 @@ sub proc2node {
                         'id'    => $id,
                         'shape' => 'diamond',
                         'text'  => $proc->{'conditions'}->[0],
+                        'css'   => $css,
                         'next'  => \@next,
                      });
             }
@@ -818,6 +841,7 @@ sub proc2node {
                         'id'    => $id,
                         'shape' => 'round square',
                         'text'  => $code,
+                        'css'   => $css,
                      });
             }
         } elsif (($type eq 'if') || ($type eq 'else if')) {
@@ -890,6 +914,7 @@ sub proc2node {
                     'id'    => $id,
                     'shape' => 'diamond',
                     'text'  => $proc->{'conditions'}->[0],
+                    'css'   => $css,
                     'next'  => \@next,
                  });
 
@@ -940,6 +965,7 @@ EOL
 
     foreach (@{$functions}) {
         my $function = $_;
+        my (@css_diff_add, @css_diff_del);
         printf("<div class=\"mermaid\">graph TB\n");
         printf("subgraph Figure %s\n", $function->{'name'});
 
@@ -974,6 +1000,33 @@ EOL
                 printf("%s%s\"%s\"%s\n",
                        $node->{'id'}, $shape_b, $node->{'text'}, $shape_e);
             }
+
+            # CSSスタイル作成
+            foreach (split(/,/,$node->{'css'})) {
+                my ($key, $val) = split(/=/, $_);
+                if ($key eq 'diff') {
+                    if ($val eq '+') {
+                        push(@css_diff_add, $node->{'id'});
+                    } elsif ($val eq '-') {
+                        push(@css_diff_del, $node->{'id'});
+                    }
+                    next;
+                }
+            }
+        }
+
+        # CSS Classes
+        printf("classDef diffAdd fill:#eaffea,stroke-width:1px\n");
+        printf("classDef diffDel fill:#ffecec,stroke-width:1px\n");
+        if (scalar(@css_diff_add) > 0) {
+            print("class");
+            foreach (@css_diff_add) { print(' ' . $_); }
+            print(" diffAdd\n");
+        }
+        if (scalar(@css_diff_del) > 0) {
+            print("class");
+            foreach (@css_diff_del) { print(' ' . $_); }
+            print(" diffDel\n");
         }
         
         printf("end\n"); # subgraph end
