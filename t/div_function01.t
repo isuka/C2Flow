@@ -23,6 +23,7 @@ subtest "C2Flow->div_function: simple" => sub {
     #--- function 1
     %exp = (
         'name'   => 'func',
+        'css'    => 'diff=,',
         'src'    => "
     nop
 ",
@@ -33,6 +34,7 @@ subtest "C2Flow->div_function: simple" => sub {
     #--- function 2
     %exp = (
         'name'   => 'func2',
+        'css'    => 'diff=,',
         'src'    => "
     nop
 
@@ -45,6 +47,7 @@ subtest "C2Flow->div_function: simple" => sub {
     #--- function 3
     %exp = (
         'name'   => 'func3',
+        'css'    => 'diff=,',
         'src'    => "
     return var
 ",
@@ -55,6 +58,7 @@ subtest "C2Flow->div_function: simple" => sub {
     #--- function 4
     %exp = (
         'name'   => 'int func4',
+        'css'    => 'diff=,',
         'src'    => "
     return var
 ",

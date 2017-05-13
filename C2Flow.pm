@@ -160,6 +160,14 @@ sub div_function {
                 $name =~ s/\n//g;
                 $name =~ s/^ +//g;
                 $name =~ s/ +$//g;
+
+                # 行頭のunified diff形式を解釈する。
+                if ($name =~ s/^([\+\-]) +//) {
+                    $f{'css'} = 'diff=' . $1 . ',';
+                } else {
+                    $f{'css'} = 'diff=,';
+                }
+
                 $f{'name'} = $name;
                 $name = '';
             } else {
@@ -296,7 +304,7 @@ sub source2proc {
         $f->{'proc'} = \@proc;
 
         # 行頭のunified diff形式を解釈する。
-        if ($line =~ s/^([\+\-]) //) {
+        if ($line =~ s/^([\+\-]) +//) {
             $src_ctrl = 'diff=' . $1 . ',';
         } else {
             $src_ctrl = 'diff=,';
@@ -506,7 +514,7 @@ sub gen_node {
         my @node;
         
         # 関数開始のノード作成
-        push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => $function->{'name'}, 'css' => 'diff=,',
+        push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => $function->{'name'}, 'css' => $function->{'css'},
                          'next' => [
                              {
                                  'id'   => 'id0a',
@@ -521,7 +529,7 @@ sub gen_node {
         # @nodeの最後にreturn|exitが無い場合はreturnを生成する
         my $last_node = $node[$#node];
         if ($last_node->{'text'} !~ m/(?:return|exit)/) {
-            push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
+            push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => $function->{'css'}});
         }
     }
 }
