@@ -4,10 +4,59 @@ use utf8;
 use strict;
 use warnings;
 
+use Encode;
+use File::Temp qw/tempfile/;
 use Test::More;
 #use Devel::Cover;
 
 use C2Flow;
+
+use constant TEST_CODE => "
+// 関数ポインタを使用した関数
+func1 (int argc, char *argv) {
+    nop1
+}
+
+// return, exitの場合はtypeがctrlに分類される
+func2 {
+    if (cond1) {
+        return
+    } else if (cond2) {
+        exit
+    } else {
+        return 1
+    }
+}
+
+func3 {
+    switch (cond1) {
+    case fuga
+        return
+    case piyo
+        nop
+        break
+    default
+        exit 1
+    }
+}
+
+func4 {
+    return 1
+    exit 2
+}
+
+func5 {
+    while (cond1) {
+        nop1
+        return 1
+    }
+
+    while (cond2) {
+        nop2
+        exit 2
+    }
+}
+";
 
 #
 # Divide Function Test
@@ -17,7 +66,11 @@ subtest "C2Flow->div_control: misc" => sub {
     my @proc; # 処理を格納する配列
     my $fn = 0;
 
-    $p->read('./t/div_control03.txt');
+    my ($fh, $filename) = tempfile(UNLINK => 1);
+    print $fh encode('utf-8', TEST_CODE);
+    close($fh);
+
+    $p->read($filename);
     $p->div_function();
     $p->div_control();
 

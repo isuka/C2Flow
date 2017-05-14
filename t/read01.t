@@ -4,10 +4,20 @@ use utf8;
 use strict;
 use warnings;
 
+use Encode;
+use File::Temp qw/tempfile/;
 use Test::More;
 #use Devel::Cover;
 
 use C2Flow;
+
+use constant TEST_CODE => "
+test begin
+// 1行コメント
+1// 途中から始まる1行コメント
+2 // 途中から始まる1行コメント
+ 3  // 途中から始まる1行コメント
+test end";
 
 use_ok('C2Flow');
 
@@ -23,7 +33,11 @@ subtest "C2Flow->new" => sub {
 subtest "C2Flow->read01: comment" => sub {
     my $p = C2Flow->new();
 
-    $p->read('./t/read01.txt');
+    my ($fh, $filename) = tempfile(UNLINK => 1);
+    print $fh encode('utf-8', TEST_CODE);
+    close($fh);
+
+    $p->read($filename);
     ok(${$p->{'read_src'}} eq '
 test begin
 
