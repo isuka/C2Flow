@@ -47,7 +47,7 @@ subtest "C2Flow->diff" => sub {
     print $fh encode('utf-8', TEST_CODE);
     close($fh);
 
-    my ($stdout, $stderr) = tee {
+    my ($stdout, $stderr) = capture {
         $p->read($filename);
         $p->div_function();
         $p->div_control();
