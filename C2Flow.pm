@@ -127,7 +127,12 @@ sub read {
         s/[\r\n]+$/\n/; # 改行コードを\nに統一
         s/\t/ /g;       # タブを空白に置換
         s/　/  /g;      # 全角空白を半角空白x2に置換
+
+        # titleタグがあれば保存する
+        my $title = m|(<title>.*?</title>)| ? $1 : '';
+        
         s/\/\/.*$//;    # 一行コメントを削除
+        ${$self->{'read_src'}} .= $title;
         ${$self->{'read_src'}} .= $_;
     }
     ${$self->{'read_src'}} =~ s/\/\*.*?\*\///gs; # コメント行を削除
@@ -158,6 +163,14 @@ sub div_function {
                 # 改行と前後のスペースを取り除いて関数名を確定させる
                 # この時、中括弧は保存しない
                 $name =~ s/\n//g;
+
+                my $title;
+                if ($name =~ s|<title>(.*?)</title>||g) {
+                    $title = $1;
+                } else {
+                    $title = '';
+                }
+
                 $name =~ s/^ +//g;
                 $name =~ s/ +$//g;
 
@@ -169,6 +182,7 @@ sub div_function {
                 }
 
                 $f{'name'} = $name;
+                $f{'title'} = $title;
                 $name = '';
             } else {
                 # 深さが1以上なら関数中の中括弧なのでソースに含める
@@ -975,7 +989,7 @@ EOL
         my $function = $_;
         my (@css_diff_add, @css_diff_del);
         printf("<div class=\"mermaid\">graph TB\n");
-        printf("subgraph Figure %s\n", $function->{'name'});
+        printf("subgraph %s\n", $function->{'title'});
 
         foreach (@{$function->{'node'}}) {
             my $node = $_;

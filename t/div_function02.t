@@ -86,6 +86,7 @@ subtest "C2Flow->div_function: complex" => sub {
     #--- function 1
     %exp = (
         'name'   => 'func',
+        'title'  => '',
         'css'    => 'diff=,',
         'src'    => "
     nop
@@ -100,6 +101,7 @@ subtest "C2Flow->div_function: complex" => sub {
     #--- function 2
     %exp = (
         'name'   => 'void func2',
+        'title'  => '',
         'css'    => 'diff=,',
         'src'    => "
     nop
@@ -119,6 +121,7 @@ subtest "C2Flow->div_function: complex" => sub {
     #--- function 3
     %exp = (
         'name'   => 'int func3(args)',
+        'title'  => '',
         'css'    => 'diff=,',
         'src'    => "
     {
@@ -139,6 +142,7 @@ subtest "C2Flow->div_function: complex" => sub {
     #--- function 4
     %exp = (
         'name'   => 'void func4 ( arg1, arg2 )',
+        'title'  => '',
         'css'    => 'diff=,',
         'src'    => "
       void func4-1 ( args ) {
@@ -152,6 +156,7 @@ subtest "C2Flow->div_function: complex" => sub {
     #--- function 5
     %exp = (
         'name'   => 'void func5 (int *arg)',
+        'title'  => '',
         'css'    => 'diff=,',
         'src'    => "
     nop
@@ -163,6 +168,7 @@ subtest "C2Flow->div_function: complex" => sub {
     #--- function 6
     %exp = (
         'name'   => 'void func6(int argc,char *argv)',
+        'title'  => '',
         'css'    => 'diff=,',
         'src'    => "
     nop
