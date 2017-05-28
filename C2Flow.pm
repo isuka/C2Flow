@@ -1,97 +1,15 @@
 #!/usr/local/bin/perl-5.22.0
 
 =pod
-- 1行1処理のまとまりとして処理する。
 
-行の属性は段階的に付与していくか？
-何が属性として必要か？
-まずは関数単位に分割したい最初に見つけたが閉じられるまで
+TODO:
+- 複数行の処理を扱えるようにする。
 
+- 異常を見つけた時にコードのおかしいところを指摘する。
+  ->擬似コードを表示できるようにする必要がある
 
-擬似コードを表示できるようにする必要があるか？
-> 擬似コードを表示する(保持する)場合
-  どこで表示する？表示する場所があるなら。
-　SIML機能入れないなら擬似コードを元の構造で保つ必要はないだろう。
-> 表示しない場合
-　パースする時に元の構造を保持する必要が無いので楽。
-
-異常を見つけた時にコードのおかしいところが必要か。
-元の構造は維持しないと厳しいかなあ。
-
-論理確認のSIMLは無くても困らないかな。
-多分そこまで間に合わない。
-
-
-サポートする制御構文
-改行位置に関わらず解析できる必要がある。
-
-セミコロンを不要にする代わりに、制御構文は行頭に無ければならない。
-ただし、空白とコメントはあっても良い。
-
-if (hoge) {
-} else if (fuga) {
-} else {
-}
-
-switch (hoge) {
-case fuga:
-    break;
-default:
-}
-
-while (hoge) {
-}
-
-until (hoge) {
-}
-
-do {
-} while (hoge);
-
-for (i=0; i < hoge; i++) {
-}
-
-読み込む時に行番号と対応付けたハッシュデータで保持する？
-
-前提として、ifとかwhileの前に処理を書くとか無いと信じる。
-そういう書き方はコーディングの時にでもどうぞ。
-
-というわけなので、制御文は行単位に解析で良い。
-行番号に紐付けた構造で管理して、頭から順番に解析していく。
-
-中括弧で囲まれた部分が処理単位なので、一番内側の中括弧を外しながら処理をしていく？
-面倒くさそう？
-サポートする制御は以下。
-それぞれ形式が異なるので解析が面倒くさい。
-人によって書き方違うかもしれないし。
-絶対守ってほしいこと制御文は文の行頭(スペースを除く)から始めるという事。
-
-解析は行単位に見ていき、制御文字を探す。
-見つかった場合はその制御の最後(ifなら閉じ括弧と次の行にelseが続いていないか)を確認する。
-
-if (hoge) { hogehoge; } else if (piyo) { piyopiyo; } else { fugafuga; }
-switch (hoge) { case FOO: hogehoge; break; case BAR: piyopiyo; break; default: fugafuga; }
-while (hoge) { hogehoge; }
-for (i=0;i<=n;i++) { hogehoge; }
-
-@src : ファイルを1行ごとに読み込んで格納
- |
- +-> % 
-
-制御文のデータ構造
-%{ ctrl => "define" : 関数定義
-           "call"   : 関数コール
-           "proc"   : 表示のみの処理
-           "if"
-           "switch"
-           "while"
-           "for"
-   name => 関数名
-   condition => true, false, null, or value
-   proc => @処理、次の階層を繋げる場合もある
-   prev => 一つ上の階層のハッシュ
-   judgment => @条件
-}
+https://ds504.awmdm.jp
+FJ-EMM
 
 =cut
 
@@ -231,62 +149,7 @@ sub div_function {
 #                                            }
 #                         }
 # }
-#
-# 各制御構文における構造例
-# - while
-#   \@proc
-#   + [n] {
-#           'type'       => while
-#           'conditions' => whileの条件
-#           'src'        => while内のソース(改行コード付、最後にNULL)
-#           'proc'       => \@proc ... while内の処理
-#         }
-#
-# - while|untile|do|for|switch|if
-#   \@proc
-#   + [n] {
-#           'type'       => while|untile|do|for|switch|if
-#           'conditions' => \@conditions
-#           'src'        => source code
-#           'proc'       => \@proc ... 再帰的に格納
-#         }
-#
-# - while|untile|do|for|switch|if
-#   \@proc
-#   + [n] {
-#           'type'       => while|untile|do|for|switch|if
-#           'conditions' => \@conditions
-#           'src'        => source code
-#           'proc'       => \@proc ... 再帰的に格納
-#         }
-#
-# - while|untile|do|for|switch|if
-#   \@proc
-#   + [n] {
-#           'type'       => while|untile|do|for|switch|if
-#           'conditions' => \@conditions
-#           'src'        => source code
-#           'proc'       => \@proc ... 再帰的に格納
-#         }
-#
-# - while|untile|do|for|switch|if
-#   \@proc
-#   + [n] {
-#           'type'       => while|untile|do|for|switch|if
-#           'conditions' => \@conditions
-#           'src'        => source code
-#           'proc'       => \@proc ... 再帰的に格納
-#         }
-#
-# - if
-#   \@proc
-#   + [n] {
-#           'type'       => while|untile|do|for|switch|if
-#           'conditions' => \@conditions
-#           'src'        => source code
-#           'proc'       => \@proc ... 再帰的に格納
-#         }
-#
+
 sub div_control {
     my $self = shift;
     my $functions = $self->{'functions'};
@@ -566,6 +429,7 @@ sub proc2node {
         my $proc = $proc_ref->[$i];
         my $type = $proc->{'type'};
         my $css  = $proc->{'css'};
+#        printf("> type=%s, code=%s\n", $type, defined($proc->{'code'}) ? $proc->{'code'} : 'no');
         if ($type eq 'proc') {
             my $id = sprintf("%s%da", $parent_id, $i);
 
@@ -1053,21 +917,6 @@ EOL
         
         printf("end\n"); # subgraph end
         printf("</div>\n");
-
-        # sq[Square shape] --> ci((Circle shape))
-        # od>Odd shape]-- Two line<br>edge comment --> ro
-        # di{Diamond with <br/> line break} -.-> ro(Rounded<br>square<br>shape)
-        # di==>ro2(Rounded square shape)
-        # %% Notice that no text in shape are added here instead that is appended further down
-        # e --> od3>Really long text with linebreak<br>in an Odd shape]
-        # %% Comments after double percent signs
-        # e((Inner / circle<br>and some odd <br>special characters)) --> f(a)
-        # cyr[Cyrillic]-->cyr2((Circle shape));
-
-        # classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-        # classDef orange fill:#f96,stroke:#333,stroke-width:4px;
-        # class sq,e green
-        # class di orange
     }
 
     print <<EOL;
