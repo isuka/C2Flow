@@ -122,8 +122,6 @@ $p->gen_mermaid();
 
 You place C2Flow where the module passes.
 
-## Anything Else
-
 ## Licence
 
 [MIT](https://github.com/isuka/C2Flow/blob/master/LICENCE)
