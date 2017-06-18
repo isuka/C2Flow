@@ -70,12 +70,18 @@ subtest "C2Flow->diff" => sub {
     $fn++;
 
     # func2
-    like($div[$fn], qr/class start id0a id1a return diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class start diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class id0a diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class id1a diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class return diffAdd/, 'func'.$fn.': like class diffAdd');
     unlike($div[$fn], qr/class .* diffDel/, 'func'.$fn.': unlike class diffDel');
     $fn++;
 
-   # func3
-    like($div[$fn], qr/class start id0a id1a return diffAdd/, 'func'.$fn.': like class diffAdd');
+    # func3
+    like($div[$fn], qr/class start diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class id0a diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class id1a diffAdd/, 'func'.$fn.': like class diffAdd');
+    like($div[$fn], qr/class return diffAdd/, 'func'.$fn.': like class diffAdd');
     unlike($div[$fn], qr/class .* diffDel/, 'func'.$fn.': unlike class diffDel');
     $fn++;
 

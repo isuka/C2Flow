@@ -904,15 +904,11 @@ EOL
         # CSS Classes
         printf("classDef diffAdd fill:#eaffea,stroke-width:1px\n");
         printf("classDef diffDel fill:#ffecec,stroke-width:1px\n");
-        if (scalar(@css_diff_add) > 0) {
-            print("class");
-            foreach (@css_diff_add) { print(' ' . $_); }
-            print(" diffAdd\n");
+        foreach (@css_diff_add) {
+            print("class " . $_ . " diffAdd\n");
         }
-        if (scalar(@css_diff_del) > 0) {
-            print("class");
-            foreach (@css_diff_del) { print(' ' . $_); }
-            print(" diffDel\n");
+        foreach (@css_diff_del) {
+            print("class " . $_ . " diffDel\n");
         }
         
         printf("end\n"); # subgraph end
