@@ -243,7 +243,7 @@ sub source2proc {
                 push(@{$ctrl_ref->{'proc'}}, \%f_case);
             } elsif (($ctrls[$#ctrls] eq 'do') && ($match_ctrl eq 'while')) {
                 # TODO: '}'とwhileは同じ行にある想定かつ、whileの条件文も同じ行にある想定の処理
-                $line =~ s/.*\( *(.*?) *\).*/$1/;
+                $line =~ s/[^\(]*\( *(.*) *\).*/$1/;
                 $ctrl_ref->{'conditions'}[0] = $line;
 
                 &source2proc($ctrl_ref);
@@ -324,12 +324,12 @@ sub source2proc {
                     my $condition = 'else';
                     push(@conditions, $condition);
                 } else {
-                    $line =~ s/(.+?)\{ *//;
+                    $line =~ s/(.+)\{ *//;
                     if ($line ne '') {
                         $ctrl_ref->{'src'} .= $line . "\n";
                     }
                     my $condition = $1;
-                    $condition =~ s/.*\( *(.*?) *\).*/$1/;
+                    $condition =~ s/[^\(]*\( *(.*) *\).*/$1/;
                     push(@conditions, $condition);
                 }
             }
