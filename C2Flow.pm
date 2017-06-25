@@ -843,6 +843,15 @@ sub gen_mermaid {
 
     <link href="mermaid.css" rel="stylesheet" type="text/css"/>
     <script src="mermaid.js"></script>
+    <script>
+        var config = {
+            startOnLoad:true,
+            flowchart:{
+                    useMaxWidth:false
+            }
+        };
+        mermaid.initialize(config);
+    </script>
 
 </head>
 
