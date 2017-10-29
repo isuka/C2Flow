@@ -103,6 +103,20 @@ func11 {
         nop3
     }
 }
+
+// switchテスト(case|defaultの後ろにコロンがあっても良い)
+func12 {
+    switch (condition1) {
+    case fuga:
+        nop1
+        break
+    case piyo:
+        nop2
+    default:
+        nop3
+    }
+}
+
 ";
 
 #
@@ -301,6 +315,26 @@ subtest "C2Flow->div_control: simple" => sub {
         'src'        => '',
         'css'        => 'diff=,',
         'proc'       => [
+                            { 'type' => 'proc', 'code' => 'nop3', 'css' => 'diff=,' },
+                        ]
+         });
+    is_deeply($p->{'functions'}[$fn]->{'proc'}, \@proc) || diag explain $p->{'functions'}[$fn]->{'proc'};
+    $fn++;
+
+    #--- function 12
+    @proc = ();
+    push(@proc, {
+        'type'       => 'switch',
+        'conditions' => ['condition1'],
+        'src'        => '',
+        'css'        => 'diff=,',
+        'proc'       => [
+                            { 'type' => 'ctrl', 'conditions' => ['fuga'], 'code' => 'case', 'css' => 'diff=,' },
+                            { 'type' => 'proc', 'code' => 'nop1', 'css' => 'diff=,' },
+                            { 'type' => 'ctrl', 'code' => 'break', 'css' => 'diff=,' },
+                            { 'type' => 'ctrl', 'conditions' => ['piyo'], 'code' => 'case', 'css' => 'diff=,' },
+                            { 'type' => 'proc', 'code' => 'nop2', 'css' => 'diff=,' },
+                            { 'type' => 'ctrl', 'conditions' => ['default'], 'code' => 'case', 'css' => 'diff=,' },
                             { 'type' => 'proc', 'code' => 'nop3', 'css' => 'diff=,' },
                         ]
          });

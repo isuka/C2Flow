@@ -213,7 +213,7 @@ sub source2proc {
 
             if (($ctrls[$#ctrls] eq 'switch') && ($match_ctrl eq 'case')) {
                 # 条件を取り出し
-                $line =~ s/.*case +(.+$)//;
+                $line =~ s/.*case +(.+?):?$//;
                 my $condition = $1;
 
                 # @conditionsにpushした同一インデックスの@procにprocハッシュ作成

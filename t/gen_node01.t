@@ -103,6 +103,20 @@ func10 {
         nop6
     }
 }
+
+// switchテスト(case|defaultの後ろにコロンがあっても良い)
+func11 {
+    switch (condition1) {
+    case fuga:
+        nop1
+        break
+    case piyo:
+        nop2
+    default:
+        nop3
+    }
+}
+
 ";
 
 #
@@ -610,6 +624,62 @@ subtest "C2Flow->gen_node: simple" => sub {
                          }
                      ]});
     push(@node, {'id' => 'id2a1a', 'shape' => 'square', 'text' => 'nop6', 'css' => 'diff=,',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'return', 'shape' => 'round square', 'text' => 'return', 'css' => 'diff=,'});
+    is_deeply($p->{'functions'}[$fn]->{'node'}, \@node) || diag explain $p->{'functions'}[$fn]->{'node'};
+    $fn++;
+
+    #--- function 11
+    @node = ();
+    push(@node, {'id' => 'start', 'shape' => 'round square', 'text' => 'func11', 'css' => 'diff=,',
+                     'next' => [
+                         {
+                             'id'   => 'id0a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a', 'shape' => 'diamond', 'text' => 'condition1', 'css' => 'diff=,',
+                     'next' => [
+                         {
+                             'id'   => 'id0a1a',
+                             'link' => 'allow',
+                             'text' => 'fuga'
+                         },
+                         {
+                             'id'   => 'id0a4a',
+                             'link' => 'allow',
+                             'text' => 'piyo'
+                         },
+                         {
+                             'id'   => 'id0a6a',
+                             'link' => 'allow',
+                             'text' => 'default'
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a1a', 'shape' => 'square', 'text' => 'nop1', 'css' => 'diff=,',
+                     'next' => [
+                         {
+                             'id'   => 'return',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a4a', 'shape' => 'square', 'text' => 'nop2', 'css' => 'diff=,',
+                     'next' => [
+                         {
+                             'id'   => 'id0a6a',
+                             'link' => 'allow',
+                             'text' => ''
+                         }
+                     ]});
+    push(@node, {'id' => 'id0a6a', 'shape' => 'square', 'text' => 'nop3', 'css' => 'diff=,',
                      'next' => [
                          {
                              'id'   => 'return',
